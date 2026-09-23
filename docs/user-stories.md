@@ -19,3 +19,13 @@
 3. As a roommate, I want to request a swap of my assigned chore with another roommate, who can accept or decline, so that we can adjust when our schedules conflict.
 
 4. As a roommate, I want to see a summary of how many chores each household member has completed this month so that we can check that the workload is being split evenly.
+
+## Omar Mohamed
+
+1. As a roommate, I want a leaderboard by roommate score so that I can see which roommates have done the most chores/ are the best at doing chores 
+
+2. As a roommate, I want to every chore to have an optional due date and time so that I can keep track of chores and deadline
+
+3. As a roommate, I want to have a board of shame so that every roommate in the group is notified when someone missed a chore or has not been doing their chores
+
+4. As a roommate, I want to be have a limited number of tickets so that I can skip a chore. 
