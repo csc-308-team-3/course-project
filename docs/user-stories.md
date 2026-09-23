@@ -29,3 +29,13 @@
 3. As a roommate, I want to have a board of shame so that every roommate in the group is notified when someone missed a chore or has not been doing their chores
 
 4. As a roommate, I want to be have a limited number of tickets so that I can skip a chore. 
+
+## Gary Chiu
+
+1. As a roommate, I want to view all chores in a calendar organized by due date so that I can see what needs to be now or later.
+
+2. As a roommate, I want to filter the chore list by roommates so that I can see what each person's list looks like
+   
+3. As a roommate, I want to view the completion history of a chore so that I can see who has done it in the past.
+   
+4. As a roommate, I want to edit or delete a chore that was created so that I can keep the chore list accurate.
