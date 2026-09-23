@@ -10,12 +10,12 @@
 
 4. As a roommate, I want to assign estimated completion times to chores so that I can plan my schedule.
    
-## name here
+## Taiki Jeffers
 
-1. 1
+1. As a roommate, I want to set a chore to repeat on a schedule (daily, weekly, or monthly) and rotate among household members so that recurring tasks are shared fairly without being reassigned by hand every time.
 
-2. 2
+2. As a roommate, I want to mark a chore as complete so that my roommates can see it has been done and the next person in the rotation is assigned.
 
-3. 3
+3. As a roommate, I want to request a swap of my assigned chore with another roommate, who can accept or decline, so that we can adjust when our schedules conflict.
 
-4. 4
+4. As a roommate, I want to see a summary of how many chores each household member has completed this month so that we can check that the workload is being split evenly.
