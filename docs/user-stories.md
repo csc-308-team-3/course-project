@@ -39,3 +39,13 @@
 3. As a roommate, I want to view the completion history of a chore so that I can see who has done it in the past.
    
 4. As a roommate, I want to edit or delete a chore that was created so that I can keep the chore list accurate.
+
+## Eran Knafo 
+
+1. As a roommate, I want different chores to be ranked by time and difficulty so theres a fair distribution of chores
+
+2. As a roommate, I want to dispute chores in case another roommate tries to game the system
+
+3. As a roommate, I want to be able to join and get onboarded via invitation link so its easy to get on when a new roommate moves in
+
+4. As a roommate, I want to be notified when I get assigned a new chore, so i don't forget about my tasks
