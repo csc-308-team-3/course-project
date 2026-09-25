@@ -6,7 +6,7 @@ assigns them to roommates, and rotates assignments each week so that everyone sh
 Unlike keeping track of everyone's tasks through group chats, notes, or memory, 
 **ChoreMate** gives our users one clear, fair, and easy-to-view chore schedule.
 
-## Code Quality Tools
+## ESLint and Prettier Setup
 
 This project uses ESLint to check for code problems and Prettier to keep code formatting consistent.
 
