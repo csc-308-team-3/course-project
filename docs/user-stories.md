@@ -8,7 +8,7 @@
 
 3. As a roommate, I want to add roommates to my household group so that we can view the same chore responsibilities page.
 
-4. As a roommate, I want to assign estimated completion times to chores so that I can plan my schedule.
+4. As a roommate, I want to view the next chore board for the next week so I can see my next week’s chore tasks.
    
 ## Taiki Jeffers
 
