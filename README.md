@@ -27,3 +27,7 @@ Format all files with Prettier:
 ```bash
 npm run format
 ```
+
+## Figma Storyboard Link
+
+https://www.figma.com/proto/U7m0HnNWwKcZakiTlvs2xr/Wireframe-Example?node-id=0-1&t=qmyFBSCaSR7sL4gN-1
