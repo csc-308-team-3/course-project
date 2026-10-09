@@ -1,5 +1,9 @@
 ## Product Vision
 
+Follow project conventions described in [Contribution Guidelines](conventions.md)
+
+## Product Vision
+
 For roommates who want to divide household responsibilities between each person fairly, 
 **ChoreMate** is a roommate chore-management web app that organizes chores, 
 assigns them to roommates, and rotates assignments each week so that everyone shares the work. 
