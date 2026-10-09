@@ -21,7 +21,7 @@ function RegisterPage() {
         <p className="eyebrow">START YOUR HOUSEHOLD</p>
         <h1>ChoreMate</h1>
         <p className="welcome-text">
-          Let’s create your ChoreMate account.
+          Let’s create your ChoreMate account, mate!
         </p>
 
         <form onSubmit={handleSubmit}>

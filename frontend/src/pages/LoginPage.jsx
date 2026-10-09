@@ -20,7 +20,7 @@ function LoginPage() {
         <div className="brand-mark">⌂</div>
         <p className="eyebrow">ROOMMATES, MADE EASIER</p>
         <h1>ChoreMate</h1>
-        <p className="welcome-text">Share the work. Enjoy the home.</p>
+        <p className="welcome-text">Do your chores, mate!</p>
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
