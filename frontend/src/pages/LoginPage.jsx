@@ -57,7 +57,9 @@ function LoginPage() {
         </button>
 
         <p className="create-account">
-          New here? <button type="button">Create an account</button>
+            New here? <button type="button" onClick={() => navigate('/register')}>
+            Create an account
+            </button>
         </p>
       </section>
     </main>
