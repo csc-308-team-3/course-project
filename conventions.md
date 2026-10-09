@@ -20,7 +20,7 @@ Our project board uses the following columns:
 2. Assign yourself to the issue in GitHub and on the project board (where applicable).
 3. Move it to **In progress**.
 4. Update local `main`, then create a new branch named after the issue.
-5. Implement the issue, make logical commits, and update the requirements checklist as you go.
+5. Implement the issue, make logical commits following the commit message conventions, and update the requirements checklist as you go.
 6. Push the branch, open a PR into `main`, and move the issue to **In review**.
 7. Once approved, checks pass, and the team has been notified, merge via a **merge commit**.
 8. Close/verify closure of the issue and move it to **Done**.
@@ -143,8 +143,6 @@ The outer fence uses **four backticks** so the three-backtick Markdown block can
 - [Explicitly excluded functionality]
 ````
 
-Optionally save the issue template as `.github/ISSUE_TEMPLATE/task.md` for GitHub's **New issue** template picker. When creating a template file, you can add GitHub issue-template front matter above the content if desired.
-
 ## 4. Branch Naming
 
 Use one issue branch per issue, named:
@@ -172,6 +170,8 @@ For example: `feature/1-2-main-page-frontend`.
 Use the following Conventional Commits-style format for **every commit within the branch**:
 
 `<type>: <concise description of what changed>`
+
+**GitHub issue numbers are required in PR descriptions, not in commit messages.** Keep each commit message focused on the specific change.
 
 | Prefix | Purpose | Example |
 | --- | --- | --- |
@@ -212,7 +212,7 @@ All work must be merged into `main` through a PR. **Do not push directly to `mai
 4. Commit and push your issue branch.
 5. Incorporate recent changes from `main` as needed and resolve conflicts.
 6. Create a PR **from the issue branch into `main`**, with a title such as `feat: implement main page frontend`.
-7. Link the issue using `Closes #<actual-GitHub-issue-number>` in the PR description.
+7. **Link the related GitHub issue in the PR description**, using `Closes #<actual-GitHub-issue-number>` so GitHub can automatically close it when merged into the default branch. For other related issues that should not close, use `Related to #<issue-number>`.
 8. Move the issue to **In review** and request feedback.
 
 ### PR template (copy into the PR description)
@@ -227,6 +227,7 @@ All work must be merged into `main` through a PR. **Do not push directly to `mai
 ## Related Issue
 
 Closes #<issue-number>
+<!-- For other issues that this PR references but does not complete, add: Related to #<issue-number> -->
 
 ---
 
@@ -255,14 +256,13 @@ Closes #<issue-number>
 ## Pre-Merge Checklist
 
 - [ ] PR targets `main`.
-- [ ] Branch and commits follow naming conventions.
+- [ ] Branch naming and commit messages follow the conventions.
+- [ ] The PR description links the relevant issue using `Closes #<issue-number>` (or `Related to #<issue-number>` when appropriate).
 - [ ] No unrelated changes or unintended files are included.
 - [ ] Merge conflicts are resolved and required checks pass.
 - [ ] Team has been notified in the group chat before merging.
 - [ ] Any required reviews/approvals have been completed.
 ````
-
-Optionally save this template as `.github/pull_request_template.md` to have it pre-filled automatically when opening PRs.
 
 ## 7. PR Reviews and Merging
 
