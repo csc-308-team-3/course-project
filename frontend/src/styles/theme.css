@@ -1,6 +1,15 @@
 :root {
+  --forest: #1d3734;
+  --forest-light: #294c46;
+  --green: #347c61;
+  --mint: #dff2e9;
+  --gold: #f8cd8f;
+  --text: #203633;
+  --muted-text: #62706d;
+  --border: #d9e2dc;
+
   font-family: Inter, Arial, sans-serif;
-  color: #1d2c2b;
+  color: var(--text);
   background: #f5f7f4;
 }
 
@@ -23,12 +32,12 @@ input {
   font: inherit;
 }
 
-.login-page {
+.app-page {
   align-items: center;
   background:
     radial-gradient(circle at 12% 15%, #a8dfca 0 80px, transparent 81px),
-    radial-gradient(circle at 90% 82%, #f8cd8f 0 130px, transparent 131px),
-    linear-gradient(135deg, #1d3734, #294c46);
+    radial-gradient(circle at 90% 82%, var(--gold) 0 130px, transparent 131px),
+    linear-gradient(135deg, var(--forest), var(--forest-light));
   display: flex;
   justify-content: center;
   min-height: 100vh;
@@ -37,12 +46,11 @@ input {
   position: relative;
 }
 
-.login-card {
+.app-card {
   background: rgba(255, 255, 255, 0.97);
   border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: 28px;
   box-shadow: 0 24px 60px rgba(8, 30, 26, 0.3);
-  max-width: 460px;
   padding: 38px;
   position: relative;
   text-align: left;
@@ -52,7 +60,7 @@ input {
 
 .brand-mark {
   align-items: center;
-  background: #dff2e9;
+  background: var(--mint);
   border-radius: 14px;
   color: #277052;
   display: flex;
@@ -71,16 +79,16 @@ input {
   margin: 0 0 8px;
 }
 
-.login-card h1 {
-  color: #203633;
+.page-title {
+  color: var(--text);
   font-family: Georgia, serif;
   font-size: clamp(2.8rem, 8vw, 4rem);
   line-height: 1;
   margin: 0;
 }
 
-.welcome-text {
-  color: #62706d;
+.page-subtitle {
+  color: var(--muted-text);
   margin: 12px 0 30px;
 }
 
@@ -94,9 +102,9 @@ label {
 
 input {
   background: #f5f7f4;
-  border: 1px solid #d9e2dc;
+  border: 1px solid var(--border);
   border-radius: 12px;
-  color: #203633;
+  color: var(--text);
   margin-bottom: 20px;
   outline: none;
   padding: 14px 15px;
@@ -108,25 +116,8 @@ input:focus {
   box-shadow: 0 0 0 3px rgba(79, 155, 120, 0.18);
 }
 
-.password-row {
-  align-items: baseline;
-  display: flex;
-  justify-content: space-between;
-}
-
-.text-button,
-.create-account button {
-  background: none;
-  border: 0;
-  color: #347c61;
-  cursor: pointer;
-  font-size: 0.86rem;
-  padding: 0;
-  text-decoration: underline;
-}
-
-.login-button,
-.google-button {
+.primary-button,
+.secondary-button {
   border-radius: 12px;
   cursor: pointer;
   font-weight: 800;
@@ -135,55 +126,22 @@ input:focus {
   width: 100%;
 }
 
-.login-button:hover,
-.google-button:hover {
+.primary-button:hover,
+.secondary-button:hover {
   transform: translateY(-2px);
 }
 
-.login-button {
-  background: #347c61;
+.primary-button {
+  background: var(--green);
   border: 0;
   box-shadow: 0 8px 16px rgba(52, 124, 97, 0.24);
   color: white;
 }
 
-.divider {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-  margin: 23px 0;
-}
-
-.divider span {
-  background: #dbe3de;
-  height: 1px;
-  flex: 1;
-}
-
-.divider p {
-  color: #84918e;
-  font-size: 0.75rem;
-  font-weight: 800;
-  margin: 0;
-}
-
-.google-button {
+.secondary-button {
   background: white;
-  border: 1px solid #d9e2dc;
+  border: 1px solid var(--border);
   color: #314440;
-}
-
-.google-icon {
-  color: #4285f4;
-  font-weight: 900;
-  margin-right: 9px;
-}
-
-.create-account {
-  color: #62706d;
-  font-size: 0.92rem;
-  margin: 25px 0 0;
-  text-align: center;
 }
 
 .bubble,

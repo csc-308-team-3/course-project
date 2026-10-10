@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css';
+import '../styles/auth.css';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -10,17 +10,17 @@ function LoginPage() {
   }
 
   return (
-    <main className="login-page">
+    <main className="app-page">
       <div className="bubble bubble-one" />
       <div className="bubble bubble-two" />
       <div className="sparkle sparkle-one">✦</div>
       <div className="sparkle sparkle-two">✦</div>
 
-      <section className="login-card">
+      <section className="app-card auth-card">
         <div className="brand-mark">⌂</div>
-        <p className="eyebrow">ROOMMATES, MADE EASIER</p>
-        <h1>ChoreMate</h1>
-        <p className="welcome-text">Do your chores, mate!</p>
+        <p className="eyebrow">WHOSE CHORE IS IT?</p>
+        <h1 className="page-title">ChoreMate</h1>
+        <p className="page-subtitle">Do your chores, mate!</p>
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
@@ -40,7 +40,7 @@ function LoginPage() {
 
           <input id="password" type="password" placeholder="••••••••" required />
 
-          <button type="submit" className="login-button">
+          <button type="submit" className="primary-button">
             Log In
           </button>
         </form>
@@ -51,7 +51,7 @@ function LoginPage() {
           <span />
         </div>
 
-        <button type="button" className="google-button">
+        <button type="button" className="secondary-button">
           <span className="google-icon">G</span>
           Continue with Google
         </button>

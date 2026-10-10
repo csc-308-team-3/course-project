@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import './LoginPage.css';
+import '../styles/auth.css';
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -10,17 +10,17 @@ function RegisterPage() {
   }
 
   return (
-    <main className="login-page">
+    <main className="app-page">
       <div className="bubble bubble-one" />
       <div className="bubble bubble-two" />
       <div className="sparkle sparkle-one">✦</div>
       <div className="sparkle sparkle-two">✦</div>
 
-      <section className="login-card">
+      <section className="app-card auth-card">
         <div className="brand-mark">⌂</div>
-        <p className="eyebrow">START YOUR HOUSEHOLD</p>
-        <h1>ChoreMate</h1>
-        <p className="welcome-text">
+        <p className="eyebrow">READY TO SHARE THE LOAD?</p>
+        <h1 className="page-title">ChoreMate</h1>
+        <p className="page-subtitle">
           Let’s create your ChoreMate account, mate!
         </p>
 
@@ -47,7 +47,7 @@ function RegisterPage() {
             required
           />
 
-          <button type="submit" className="login-button">
+          <button type="submit" className="primary-button">
             Create Account
           </button>
         </form>
