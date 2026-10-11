@@ -325,9 +325,24 @@ input:focus {
   margin: 0;
 }
 
+.section-heading {
+  gap: 24px;
+}
+
+.section-heading > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
 .board-section .announcement-message {
-  font-size: clamp(1.25rem, 2vw, 2rem);
+  font-size: clamp(1rem, 1.5vw, 1.45rem);
   line-height: 1.25;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.small-primary-button {
+  flex-shrink: 0;
   white-space: nowrap;
 }
 

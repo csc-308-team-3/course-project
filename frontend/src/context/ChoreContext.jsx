@@ -20,7 +20,7 @@ const startingChores = [
     roommate: 'Omar Mohamed',
     category: 'Shopping',
     instructions:
-      'Can you get us another jar of Lao Gan Ma, two loaves of sourdough bread, a bottle of soy sauce, six or seven bananas, a box of Cinnamon Toast Crunch, a box of Mac and Cheese, two dozens of eggs, two gallons of lactose-free milk, and a bag of shredded mozzarella cheese? Thanks! ',
+      'Can you get us another jar of Lao Gan Ma, two loaves of sourdough bread, a bottle of soy sauce, six or seven bananas, a box of Cinnamon Toast Crunch, three ripe avocados, two dozens of eggs, two gallons of lactose-free milk, and a bag of shredded mozzarella cheese? Thanks! ',
     dueDate: 'Oct. 16',
     icon: '🛒',
     status: 'todo',
