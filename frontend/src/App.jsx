@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import HouseholdPage from './pages/HouseholdPage';
 import RegisterPage from './pages/RegisterPage';
 import ChoreDetailsPage from './pages/ChoreDetailsPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/household" element={<HouseholdPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/chores/:choreId" element={<ChoreDetailsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
     </ChoreProvider>

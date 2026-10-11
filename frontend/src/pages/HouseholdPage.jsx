@@ -42,9 +42,9 @@ function HouseholdPage() {
             <button type="button" className="nav-button active-nav-button">
               Household
             </button>
-            <button type="button" className="nav-button" disabled>
+            <Link className="nav-button" to="/profile">
               Profile
-            </button>
+            </Link>
             <Link className="text-button" to="/">
               Log out
             </Link>
