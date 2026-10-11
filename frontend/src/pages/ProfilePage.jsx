@@ -1,6 +1,20 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useHousehold } from '../context/HouseholdContext';
 
 function ProfilePage() {
+  const navigate = useNavigate();
+  const { hasHousehold, leaveHousehold } = useHousehold();
+
+  function handleLeaveHousehold() {
+    const shouldLeave = window.confirm(
+      'Are you sure you want to leave Gary Chiu’s House?',
+    );
+
+    if (shouldLeave) {
+      leaveHousehold();
+      navigate('/no-household');
+    }
+  }
   return (
     <main className="app-page profile-page">
       <div className="bubble bubble-one" />
@@ -18,6 +32,9 @@ function ProfilePage() {
           <nav className="nav-actions">
             <Link className="nav-button" to="/household">
               Household
+            </Link>
+            <Link className="nav-button" to="/awards">
+                Awards
             </Link>
             <Link className="nav-button active-nav-button" to="/profile">
               Profile
@@ -84,6 +101,14 @@ function ProfilePage() {
                 <button type="button" className="setting-row">
                   Privacy settings <span>›</span>
                 </button>
+                {hasHousehold && (
+                  <button
+                    type="button"
+                    className="setting-row leave-household-button"
+                    onClick={handleLeaveHousehold}
+                  >
+                    Leave household <span>›</span>
+                  </button> )}
               </div>
             </section>
           </div>

@@ -42,6 +42,9 @@ function HouseholdPage() {
             <button type="button" className="nav-button active-nav-button">
               Household
             </button>
+            <Link className="nav-button" to="/awards">
+                Awards
+            </Link>
             <Link className="nav-button" to="/profile">
               Profile
             </Link>
