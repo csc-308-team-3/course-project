@@ -6,7 +6,7 @@ function LoginPage() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    navigate('/board');
+    navigate('/household');
   }
 
   return (

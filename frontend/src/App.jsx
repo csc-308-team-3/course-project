@@ -1,17 +1,22 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ChoreProvider } from './context/ChoreContext';
 import LoginPage from './pages/LoginPage';
-import ChoreBoard from './pages/ChoreBoard';
+import HouseholdPage from './pages/HouseholdPage';
 import RegisterPage from './pages/RegisterPage';
+import ChoreDetailsPage from './pages/ChoreDetailsPage';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/board" element={<ChoreBoard />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Routes>
-    </BrowserRouter>
+    <ChoreProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/household" element={<HouseholdPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/chores/:choreId" element={<ChoreDetailsPage />} />
+        </Routes>
+      </BrowserRouter>
+    </ChoreProvider>
   );
 }
 
