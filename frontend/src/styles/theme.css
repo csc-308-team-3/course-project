@@ -753,13 +753,17 @@ input:focus {
 
 /* No household */
 .no-household-page {
-  align-items: center;
-  padding: 28px;
+  align-items: flex-start;
+  overflow: auto;
+  padding: 36px 20px;
 }
 
 .no-household-card {
-  padding: 34px 44px 46px;
-  width: min(100%, 980px);
+  margin: 0 auto;
+  max-width: 1040px;
+  min-height: calc(100vh - 72px);
+  padding: 30px 38px 42px;
+  width: 100%;
 }
 
 .no-household-content {
