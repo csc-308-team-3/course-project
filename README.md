@@ -4,10 +4,10 @@ Follow project conventions described in [Contribution Guidelines](conventions.md
 
 ## Product Vision
 
-For roommates who want to divide household responsibilities between each person fairly, 
-**ChoreMate** is a roommate chore-management web app that organizes chores, 
-assigns them to roommates, and rotates assignments each week so that everyone shares the work. 
-Unlike keeping track of everyone's tasks through group chats, notes, or memory, 
+For roommates who want to divide household responsibilities between each person fairly,
+**ChoreMate** is a roommate chore-management web app that organizes chores,
+assigns them to roommates, and rotates assignments each week so that everyone shares the work.
+Unlike keeping track of everyone's tasks through group chats, notes, or memory,
 **ChoreMate** gives our users one clear, fair, and easy-to-view chore schedule.
 
 ## ESLint and Prettier Setup
@@ -31,6 +31,36 @@ Format all files with Prettier:
 ```bash
 npm run format
 ```
+
+## Backend database setup
+
+ChoreMate's development PostgreSQL provider is **Supabase**. The Express backend uses the `pg` client and obtains its connection settings only from environment variables.
+
+1. In Supabase, open the team's development project and select **Connect**. Copy a PostgreSQL connection string suitable for a Node.js application. Use the pooler connection string if your network cannot reach the direct database host.
+2. Copy `.env.example` to `.env` in the repository root.
+3. Set `DATABASE_URL` in `.env` to the connection string. Keep `DATABASE_SSL=true` for Supabase.
+4. Install backend dependencies with `npm install`.
+5. Confirm the connection without starting the server:
+
+   ```bash
+   npm run db:check
+   ```
+
+6. Apply and inspect the UML schema directly in Supabase's SQL Editor and Table Editor. This repository contains only the backend database connection code; it does not manage schema migrations.
+
+7. Start the backend:
+
+   ```bash
+   npm run dev
+   ```
+
+   Visit `http://localhost:3000/health`. A successful response includes `"database": "connected"`. If configuration is missing or invalid, startup exits with a controlled message and the health endpoint returns HTTP 503 when a previously running server loses database access.
+
+The `.env` file is ignored by Git. Share development credentials only through the team's approved secret-sharing method, never in the repository, issues, or pull requests.
+
+### Schema dependency
+
+Apply the schema from issue [#1](https://github.com/csc-308-team-3/course-project/issues/1) in Supabase, then inspect its tables and relationships in Supabase's Table Editor. The backend connection check intentionally runs only `SELECT NOW()` so it remains independent of schema creation.
 
 ## Figma Storyboard Link
 
