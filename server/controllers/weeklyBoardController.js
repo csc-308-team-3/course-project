@@ -42,9 +42,18 @@ async function getWeeklyBoard(request, response) {
         JOIN chores ON chores.id = chore_instances.chore_id
         JOIN users ON users.id = chore_instances.assignee_id
         WHERE chores.household_id = $1
-          AND users.household_id = $1
-          AND chore_instances.due_date >= $2::date
-          AND chore_instances.due_date < $3::date
+        AND users.household_id = $1
+        AND (((
+              chore_instances.completed_at IS NOT NULL
+              OR chore_instances.status IN ('complete', 'completed'))
+            AND COALESCE(chore_instances.completed_at::date, chore_instances.due_date) >= $2::date
+            AND COALESCE(chore_instances.completed_at::date, chore_instances.due_date) < $3::date
+          ) OR (
+            chore_instances.completed_at IS NULL
+            AND chore_instances.status NOT IN ('complete', 'completed')
+            AND chore_instances.due_date >= $2::date
+            AND chore_instances.due_date < $3::date
+          ))
         ORDER BY users.name, chore_instances.due_date, chores.title
       `,
       [householdId, weekStart, endExclusive],
