@@ -1,0 +1,53 @@
+.auth-card {
+  max-width: 460px;
+}
+
+.password-row {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+}
+
+.text-button,
+.create-account button {
+  background: none;
+  border: 0;
+  color: var(--green);
+  cursor: pointer;
+  font-size: 0.86rem;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.divider {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin: 23px 0;
+}
+
+.divider span {
+  background: #dbe3de;
+  flex: 1;
+  height: 1px;
+}
+
+.divider p {
+  color: #84918e;
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.google-icon {
+  color: #4285f4;
+  font-weight: 900;
+  margin-right: 9px;
+}
+
+.create-account {
+  color: var(--muted-text);
+  font-size: 0.92rem;
+  margin: 25px 0 0;
+  text-align: center;
+}
