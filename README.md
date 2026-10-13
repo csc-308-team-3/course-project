@@ -1,4 +1,4 @@
-## Product Vision
+## Rules
 
 Follow project conventions described in [Contribution Guidelines](conventions.md)
 
