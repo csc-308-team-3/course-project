@@ -1,4 +1,5 @@
 const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
+const choreRoutes = require('./routes/choreRoutes');
 
 const express = require('express');
 const { checkDatabaseConnection } = require('./db');
@@ -25,4 +26,5 @@ app.get('/health', async (request, response) => {
 
 module.exports = app;
 app.use('/api/households', weeklyBoardRoutes);
+app.use('/api/households', choreRoutes);
 
