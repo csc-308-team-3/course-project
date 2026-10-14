@@ -5,7 +5,8 @@ import { useHousehold } from '../context/HouseholdContext';
 function NoHouseholdPage() {
   const [inviteCode, setInviteCode] = useState('');
   const [householdName, setHouseholdName] = useState('');
-  const [error, setError] = useState('');
+  const [joinError, setJoinError] = useState('');
+  const [createError, setCreateError] = useState('');
   const navigate = useNavigate();
   const { createHousehold, joinHousehold } = useHousehold();
 
@@ -13,7 +14,7 @@ function NoHouseholdPage() {
     event.preventDefault();
 
     if (!inviteCode.trim()) {
-      setError('Enter an invite code to join a household.');
+      setJoinError('Enter an invite code to join a household.');
       return;
     }
 
@@ -21,7 +22,7 @@ function NoHouseholdPage() {
       await joinHousehold(inviteCode);
       navigate('/household');
     } catch (requestError) {
-      setError(requestError.message);
+      setJoinError(requestError.message);
     }
   }
 
@@ -29,7 +30,7 @@ function NoHouseholdPage() {
     event.preventDefault();
 
     if (!householdName.trim()) {
-      setError('Enter a household name.');
+      setCreateError('Enter a household name.');
       return;
     }
 
@@ -37,7 +38,7 @@ function NoHouseholdPage() {
       await createHousehold(householdName);
       navigate('/household');
     } catch (requestError) {
-      setError(requestError.message);
+      setCreateError(requestError.message);
     }
   }
 
@@ -86,12 +87,12 @@ function NoHouseholdPage() {
               value={inviteCode}
               onChange={(event) => {
                 setInviteCode(event.target.value);
-                setError('');
+                setJoinError('');
               }}
               placeholder="Example: A1B2C3"
             />
 
-            {error && <p className="form-error">{error}</p>}
+            {joinError && <p className="form-error">{joinError}</p>}
 
             <button type="submit" className="primary-button">
               Join household
@@ -112,10 +113,12 @@ function NoHouseholdPage() {
               value={householdName}
               onChange={(event) => {
                 setHouseholdName(event.target.value);
-                setError('');
+                setCreateError('');
               }}
               placeholder="Example: Gary Chiu's House"
             />
+
+            {createError && <p className="form-error">{createError}</p>}
 
             <button type="submit" className="secondary-button">
               Create household

@@ -1,10 +1,12 @@
 const express = require('express');
 const { checkDatabaseConnection } = require('./db');
+const { attachDemoUser } = require('./middleware/demoUserMiddleware');
 const householdRoutes = require('./routes/householdRoutes');
 const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
 
 const app = express();
 app.use(express.json());
+app.use(attachDemoUser);
 
 app.get('/health', async (request, response) => {
   try {
