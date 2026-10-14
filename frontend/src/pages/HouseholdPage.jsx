@@ -1,15 +1,50 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import LogoutButton from '../components/LogoutButton';
-import { useChores } from '../context/ChoreContext';
+import { useHousehold } from '../context/HouseholdContext';
+
+const weekOptions = [
+  { value: '2026-09-28', label: 'Week of September 28 – October 4' },
+  { value: '2026-10-05', label: 'Week of October 5 – October 11' },
+  { value: '2026-10-12', label: 'Week of October 12 – October 18' },
+  { value: '2026-10-19', label: 'Week of October 19 – October 25' },
+  { value: '2026-10-26', label: 'Week of October 26 – November 1' },
+];
 
 function HouseholdPage() {
-  const [selectedWeek, setSelectedWeek] = useState(
-   'Week of October 12 – October 18', );
+  const [selectedWeek, setSelectedWeek] = useState('2026-10-12');
+  const [board, setBoard] = useState(null);
+  const [boardError, setBoardError] = useState('');
+  const [boardLoading, setBoardLoading] = useState(true);
+  const { household } = useHousehold();
 
-  const { chores } = useChores();
+  useEffect(() => {
+    async function loadBoard() {
+      setBoardLoading(true);
+      setBoardError('');
 
-  const roommates = ['Gary Chiu', 'Omar Mohamed', 'Chris Zielke'];
+      try {
+        const response = await fetch(
+          `/api/households/${household.id}/chore-board?weekStart=${selectedWeek}`,
+          { credentials: 'include' },
+        );
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to load the chore board.');
+        }
+
+        setBoard(data);
+      } catch (error) {
+        setBoard(null);
+        setBoardError(error.message);
+      } finally {
+        setBoardLoading(false);
+      }
+    }
+
+    loadBoard();
+  }, [household.id, selectedWeek]);
 
   function statusClass(status) {
     if (status === 'todo') return 'todo-task';
@@ -17,12 +52,10 @@ function HouseholdPage() {
     return 'complete-task';
   }
 
-  function statusMessage(chore) {
-    if (chore.status === 'complete') {
-      return `Completed ${chore.dueDate}`;
-    }
-
-    return `Due ${chore.dueDate}`;
+  function statusMessage(chore, status) {
+    return status === 'complete'
+      ? `Completed ${chore.dueDate}`
+      : `Due ${chore.dueDate}`;
   }
 
   return (
@@ -44,7 +77,7 @@ function HouseholdPage() {
               Household
             </button>
             <Link className="nav-button" to="/awards">
-                Awards
+              Awards
             </Link>
             <Link className="nav-button" to="/profile">
               Profile
@@ -55,7 +88,7 @@ function HouseholdPage() {
 
         <section className="board-intro">
           <p className="eyebrow">HOUSEHOLD CHORE BOARD</p>
-          <h1 className="board-title">Gary Chiu&apos;s House</h1>
+          <h1 className="board-title">{household.name}</h1>
 
           <div className="board-details">
             <div className="week-picker">
@@ -65,11 +98,11 @@ function HouseholdPage() {
                 onChange={(event) => setSelectedWeek(event.target.value)}
                 aria-label="Choose a week"
               >
-                <option>Week of September 28 – October 4</option>
-                <option>Week of October 5 – October 11</option>
-                <option>Week of October 12 – October 18</option>
-                <option>Week of October 19 – October 25</option>
-                <option>Week of October 26 – November 1</option>
+                {weekOptions.map((week) => (
+                  <option key={week.value} value={week.value}>
+                    {week.label}
+                  </option>
+                ))}
               </select>
 
               <span className="dropdown-arrow" aria-hidden="true">
@@ -78,7 +111,7 @@ function HouseholdPage() {
             </div>
 
             <p className="group-code">
-              Group code: <strong>A1B2C3</strong>
+              Group code: <strong>{household.inviteCode}</strong>
             </p>
           </div>
         </section>
@@ -88,7 +121,8 @@ function HouseholdPage() {
             <div>
               <p className="eyebrow">THIS WEEK'S ANNOUNCEMENT:</p>
               <h2 className="announcement-message">
-                Please Chris Zielke fix the Wi-Fi!!!! We need it for the presentation!
+                Please Chris Zielke fix the Wi-Fi!!!! We need it for the
+                presentation!
               </h2>
             </div>
 
@@ -105,36 +139,43 @@ function HouseholdPage() {
               <p className="complete-label">Complete</p>
             </div>
 
-            {roommates.map((roommate) => (
-              <div className="board-row" key={roommate}>
-                <div className="roommate-name">{roommate}</div>
+            {boardLoading && (
+              <div className="board-row">
+                <div className="roommate-name">Loading chores...</div>
+              </div>
+            )}
 
-                {['todo', 'due', 'complete'].map((status) => {
-                  const chore = chores.find(
-                    (currentChore) =>
-                      currentChore.roommate === roommate &&
-                      currentChore.status === status,
-                  );
+            {boardError && (
+              <div className="board-row">
+                <div className="roommate-name">{boardError}</div>
+              </div>
+            )}
 
-                  return (
-                    <div key={status}>
-                      {chore && (
-                        <Link
-                          className={`task-card task-card-link ${statusClass(
-                            chore.status,
-                          )}`}
-                          to={`/chores/${chore.id}`}
-                        >
-                          <span>{chore.icon}</span>
-                          <div>
-                            <h3>{chore.title}</h3>
-                            <p>{statusMessage(chore)}</p>
-                          </div>
-                        </Link>
-                      )}
-                    </div>
-                  );
-                })}
+            {!boardLoading && !boardError && board.roommates.length === 0 && (
+              <div className="board-row">
+                <div className="roommate-name">No chores for this week.</div>
+              </div>
+            )}
+
+            {board?.roommates.map((roommate) => (
+              <div className="board-row" key={roommate.id}>
+                <div className="roommate-name">{roommate.name}</div>
+
+                {['todo', 'due', 'complete'].map((status) => (
+                  <div key={status}>
+                    {roommate.chores[status].map((chore) => (
+                      <div
+                        className={`task-card ${statusClass(status)}`}
+                        key={chore.id}
+                      >
+                        <div>
+                          <h3>{chore.title}</h3>
+                          <p>{statusMessage(chore, status)}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
             ))}
           </div>
