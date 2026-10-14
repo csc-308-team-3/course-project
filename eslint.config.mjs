@@ -18,4 +18,9 @@ export default defineConfig([
     languageOptions: { globals: globals.node },
     rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
+  {
+    files: ['test/**/*.js'],
+    languageOptions: { globals: globals.node },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
 ]);
