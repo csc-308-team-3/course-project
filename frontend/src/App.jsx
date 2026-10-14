@@ -12,7 +12,11 @@ import AwardsPage from './pages/AwardsPage';
 
 function HouseholdRoute() {
   const { user } = useAuth();
-  const { hasHousehold } = useHousehold();
+  const { hasHousehold, loading } = useHousehold();
+
+  if (loading) {
+    return <main className="app-page">Loading household...</main>;
+  }
 
   return user?.householdId || hasHousehold ? (
     <HouseholdPage />
@@ -37,15 +41,50 @@ function App() {
       <AuthProvider>
         <ChoreProvider>
           <HouseholdProvider>
-          <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/no-household" element={<ProtectedRoute><NoHouseholdPage /></ProtectedRoute>} />
-            <Route path="/household" element={<ProtectedRoute><HouseholdRoute /></ProtectedRoute>} />
-            <Route path="/chores/:choreId" element={<ProtectedRoute><ChoreDetailsPage /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-            <Route path="/awards" element={<ProtectedRoute><AwardsPage /></ProtectedRoute>} />
-          </Routes>
+            <Routes>
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route
+                path="/no-household"
+                element={
+                  <ProtectedRoute>
+                    <NoHouseholdPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/household"
+                element={
+                  <ProtectedRoute>
+                    <HouseholdRoute />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chores/:choreId"
+                element={
+                  <ProtectedRoute>
+                    <ChoreDetailsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/awards"
+                element={
+                  <ProtectedRoute>
+                    <AwardsPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
           </HouseholdProvider>
         </ChoreProvider>
       </AuthProvider>
