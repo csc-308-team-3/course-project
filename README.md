@@ -39,16 +39,17 @@ ChoreMate's development PostgreSQL provider is **Supabase**. The Express backend
 1. In Supabase, open the team's development project and select **Connect**. Copy a PostgreSQL connection string suitable for a Node.js application. Use the pooler connection string if your network cannot reach the direct database host.
 2. Copy `.env.example` to `.env` in the repository root.
 3. Set `DATABASE_URL` in `.env` to the connection string. Keep `DATABASE_SSL=true` for Supabase.
-4. Install backend dependencies with `npm install`.
-5. Confirm the connection without starting the server:
+4. Set `SESSION_SECRET` to a long, random value. Set `CLIENT_ORIGIN` to the frontend URL (locally, `http://localhost:5173`).
+5. Install backend dependencies with `npm install`.
+6. Confirm the connection without starting the server:
 
    ```bash
    npm run db:check
    ```
 
-6. Apply and inspect the UML schema directly in Supabase's SQL Editor and Table Editor. This repository contains only the backend database connection code; it does not manage schema migrations.
+7. Apply the team-approved schema SQL in Supabase's SQL Editor. This creates the application tables, password-hash column, and PostgreSQL-backed session table.
 
-7. Start the backend:
+8. Start the backend:
 
    ```bash
    npm run dev
@@ -61,6 +62,21 @@ The `.env` file is ignored by Git. Share development credentials only through th
 ### Schema dependency
 
 Apply the schema from issue [#1](https://github.com/csc-308-team-3/course-project/issues/1) in Supabase, then inspect its tables and relationships in Supabase's Table Editor. The backend connection check intentionally runs only `SELECT NOW()` so it remains independent of schema creation.
+
+### Resetting the development schema
+
+The reset query permanently deletes every ChoreMate application table and its data. Keep that query in Supabase's SQL Editor or team documentation, run it only against the development project, and then run the schema query immediately afterward. Never use it against production data.
+
+### Authentication API
+
+The backend provides these session-based endpoints:
+
+- `POST /auth/register` with `name`, `email`, and `password`
+- `POST /auth/login` with `email` and `password`
+- `POST /auth/logout`
+- `GET /auth/session`
+
+Passwords are stored only as bcrypt hashes. The browser receives an HTTP-only session cookie after a successful registration or login.
 
 ## Figma Storyboard Link
 

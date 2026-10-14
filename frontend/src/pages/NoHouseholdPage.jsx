@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import LogoutButton from '../components/LogoutButton';
 import { useHousehold } from '../context/HouseholdContext';
 
 function NoHouseholdPage() {
@@ -52,9 +53,7 @@ function NoHouseholdPage() {
             <Link className="nav-button" to="/profile">
                 Profile
             </Link>
-            <Link className="text-button" to="/">
-                Log out
-            </Link>
+            <LogoutButton />
           </nav>
         </header>
 
