@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const app = require('./app');
+const { createApp } = require('./app');
 const { checkDatabaseConnection, closeDatabaseConnection } = require('./db');
 
 const port = Number.parseInt(process.env.PORT ?? '3000', 10);
@@ -8,6 +8,7 @@ const port = Number.parseInt(process.env.PORT ?? '3000', 10);
 async function startServer() {
   try {
     await checkDatabaseConnection();
+    const app = createApp();
     app.listen(port, () => {
       console.log(`ChoreMate backend listening on port ${port}.`);
     });

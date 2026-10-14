@@ -1,12 +1,31 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { login } from '../services/auth';
 import '../styles/auth.css';
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    navigate('/household');
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const { user } = await login({ email, password });
+      setUser(user);
+      navigate(user.householdId ? '/household' : '/no-household');
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -28,6 +47,8 @@ function LoginPage() {
             id="email"
             type="email"
             placeholder="name@example.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
             required
           />
 
@@ -38,10 +59,19 @@ function LoginPage() {
             </button>
           </div>
 
-          <input id="password" type="password" placeholder="••••••••" required />
+          <input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+          />
 
-          <button type="submit" className="primary-button">
-            Log In
+          {error && <p className="form-error" role="alert">{error}</p>}
+
+          <button type="submit" className="primary-button" disabled={isSubmitting}>
+            {isSubmitting ? 'Logging in…' : 'Log In'}
           </button>
         </form>
 

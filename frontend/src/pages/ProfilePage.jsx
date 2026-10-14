@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import LogoutButton from '../components/LogoutButton';
 import { useHousehold } from '../context/HouseholdContext';
 
 function ProfilePage() {
@@ -44,9 +45,7 @@ function ProfilePage() {
             <Link className="nav-button active-nav-button" to="/profile">
               Profile
             </Link>
-            <Link className="text-button" to="/">
-              Log out
-            </Link>
+            <LogoutButton />
           </nav>
         </header>
 
