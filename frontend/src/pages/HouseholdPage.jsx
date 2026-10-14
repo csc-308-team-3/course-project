@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import LogoutButton from '../components/LogoutButton';
 import { useChores } from '../context/ChoreContext';
 
 function HouseholdPage() {
@@ -48,9 +49,7 @@ function HouseholdPage() {
             <Link className="nav-button" to="/profile">
               Profile
             </Link>
-            <Link className="text-button" to="/">
-              Log out
-            </Link>
+            <LogoutButton />
           </nav>
         </header>
 
