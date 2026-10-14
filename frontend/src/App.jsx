@@ -10,7 +10,11 @@ import RegisterPage from './pages/RegisterPage';
 import AwardsPage from './pages/AwardsPage';
 
 function HouseholdRoute() {
-  const { hasHousehold } = useHousehold();
+  const { hasHousehold, loading } = useHousehold();
+
+  if (loading) {
+    return <main className="app-page">Loading household...</main>;
+  }
 
   return hasHousehold ? (
     <HouseholdPage />

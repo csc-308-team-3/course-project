@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useChores } from '../context/ChoreContext';
+import { useHousehold } from '../context/HouseholdContext';
 
 function HouseholdPage() {
   const [selectedWeek, setSelectedWeek] = useState(
    'Week of October 12 – October 18', );
 
   const { chores } = useChores();
-
-  const roommates = ['Gary Chiu', 'Omar Mohamed', 'Chris Zielke'];
+  const { household } = useHousehold();
+  const roommates = household.members;
 
   function statusClass(status) {
     if (status === 'todo') return 'todo-task';
@@ -56,7 +57,7 @@ function HouseholdPage() {
 
         <section className="board-intro">
           <p className="eyebrow">HOUSEHOLD CHORE BOARD</p>
-          <h1 className="board-title">Gary Chiu&apos;s House</h1>
+          <h1 className="board-title">{household.name}</h1>
 
           <div className="board-details">
             <div className="week-picker">
@@ -79,7 +80,7 @@ function HouseholdPage() {
             </div>
 
             <p className="group-code">
-              Group code: <strong>A1B2C3</strong>
+              Group code: <strong>{household.inviteCode}</strong>
             </p>
           </div>
         </section>
@@ -106,14 +107,14 @@ function HouseholdPage() {
               <p className="complete-label">Complete</p>
             </div>
 
-            {roommates.map((roommate) => (
-              <div className="board-row" key={roommate}>
-                <div className="roommate-name">{roommate}</div>
+            {roommates.map((roommateId) => (
+              <div className="board-row" key={roommateId}>
+                <div className="roommate-name">Member {roommateId}</div>
 
                 {['todo', 'due', 'complete'].map((status) => {
                   const chore = chores.find(
                     (currentChore) =>
-                      currentChore.roommate === roommate &&
+                      currentChore.roommate === roommateId &&
                       currentChore.status === status,
                   );
 

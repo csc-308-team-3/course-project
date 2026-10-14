@@ -4,28 +4,41 @@ import { useHousehold } from '../context/HouseholdContext';
 
 function NoHouseholdPage() {
   const [inviteCode, setInviteCode] = useState('');
+  const [householdName, setHouseholdName] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { joinHousehold } = useHousehold();
+  const { createHousehold, joinHousehold } = useHousehold();
 
-  function handleSubmit(event) {
+  async function handleJoin(event) {
     event.preventDefault();
 
-    const cleanedCode = inviteCode.trim().toUpperCase();
-
-    if (!cleanedCode) {
+    if (!inviteCode.trim()) {
       setError('Enter an invite code to join a household.');
       return;
     }
 
-    if (joinHousehold(cleanedCode)) {
-        navigate('/household');
-        return;
+    try {
+      await joinHousehold(inviteCode);
+      navigate('/household');
+    } catch (requestError) {
+      setError(requestError.message);
+    }
+  }
+
+  async function handleCreate(event) {
+    event.preventDefault();
+
+    if (!householdName.trim()) {
+      setError('Enter a household name.');
+      return;
     }
 
-    setError(
-      'We couldn’t find a household with that invite code. Check the code and try again.',
-    );
+    try {
+      await createHousehold(householdName);
+      navigate('/household');
+    } catch (requestError) {
+      setError(requestError.message);
+    }
   }
 
   return (
@@ -44,16 +57,16 @@ function NoHouseholdPage() {
 
           <nav className="nav-actions">
             <Link className="nav-button active-nav-button" to="/no-household">
-                Household
+              Household
             </Link>
             <Link className="nav-button" to="/awards">
-                Awards
+              Awards
             </Link>
             <Link className="nav-button" to="/profile">
-                Profile
+              Profile
             </Link>
             <Link className="text-button" to="/">
-                Log out
+              Log out
             </Link>
           </nav>
         </header>
@@ -65,7 +78,7 @@ function NoHouseholdPage() {
             Enter an invite code to join your roommates!
           </p>
 
-          <form className="invite-form" onSubmit={handleSubmit}>
+          <form className="invite-form" onSubmit={handleJoin}>
             <label htmlFor="invite-code">Household invite code</label>
             <input
               id="invite-code"
@@ -76,7 +89,6 @@ function NoHouseholdPage() {
                 setError('');
               }}
               placeholder="Example: A1B2C3"
-              maxLength="6"
             />
 
             {error && <p className="form-error">{error}</p>}
@@ -92,9 +104,23 @@ function NoHouseholdPage() {
             <span />
           </div>
 
-          <button type="button" className="secondary-button" disabled>
-            Create a household — coming soon
-          </button>
+          <form className="invite-form" onSubmit={handleCreate}>
+            <label htmlFor="household-name">Household name</label>
+            <input
+              id="household-name"
+              type="text"
+              value={householdName}
+              onChange={(event) => {
+                setHouseholdName(event.target.value);
+                setError('');
+              }}
+              placeholder="Example: Gary Chiu's House"
+            />
+
+            <button type="submit" className="secondary-button">
+              Create household
+            </button>
+          </form>
         </div>
       </section>
     </main>

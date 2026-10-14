@@ -3,18 +3,23 @@ import { useHousehold } from '../context/HouseholdContext';
 
 function ProfilePage() {
   const navigate = useNavigate();
-  const { hasHousehold, leaveHousehold } = useHousehold();
+  const { hasHousehold, household, leaveHousehold } = useHousehold();
 
-  function handleLeaveHousehold() {
+  async function handleLeaveHousehold() {
     const shouldLeave = window.confirm(
-      'Are you sure you want to leave Gary Chiu’s House?',
+      `Are you sure you want to leave ${household.name}?`,
     );
 
     if (shouldLeave) {
-      leaveHousehold();
-      navigate('/no-household');
+      try {
+        await leaveHousehold();
+        navigate('/no-household');
+      } catch (error) {
+        window.alert(error.message);
+      }
     }
   }
+
   return (
     <main className="app-page profile-page">
       <div className="bubble bubble-one" />
@@ -34,7 +39,7 @@ function ProfilePage() {
               Household
             </Link>
             <Link className="nav-button" to="/awards">
-                Awards
+              Awards
             </Link>
             <Link className="nav-button active-nav-button" to="/profile">
               Profile
@@ -52,7 +57,7 @@ function ProfilePage() {
             <p className="eyebrow">YOUR PROFILE</p>
             <h1 className="profile-name">Gary Chiu</h1>
             <p className="page-subtitle">
-              Member of Gary Chiu's House
+              {household ? `Member of ${household.name}` : 'No household'}
             </p>
           </div>
 
@@ -82,7 +87,7 @@ function ProfilePage() {
                 </div>
                 <div className="info-row">
                   <span>Household</span>
-                  <strong>Gary Chiu's House</strong>
+                  <strong>{household?.name || 'None'}</strong>
                 </div>
               </div>
             </section>
@@ -108,7 +113,8 @@ function ProfilePage() {
                     onClick={handleLeaveHousehold}
                   >
                     Leave household <span>›</span>
-                  </button> )}
+                  </button>
+                )}
               </div>
             </section>
           </div>
