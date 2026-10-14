@@ -1,7 +1,7 @@
-const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
-
 const express = require('express');
 const { checkDatabaseConnection } = require('./db');
+const householdRoutes = require('./routes/householdRoutes');
+const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
 
 const app = express();
 app.use(express.json());
@@ -23,6 +23,8 @@ app.get('/health', async (request, response) => {
   }
 });
 
-module.exports = app;
+app.use('/api/households', householdRoutes);
 app.use('/api/households', weeklyBoardRoutes);
+
+module.exports = app;
 
