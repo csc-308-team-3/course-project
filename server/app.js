@@ -5,6 +5,7 @@ const session = require('express-session');
 const { checkDatabaseConnection, getPool } = require('./db');
 const authRoutes = require('./routes/auth');
 const householdRoutes = require('./routes/householdRoutes');
+const leaderboardRoutes = require('./routes/leaderboardRoutes');
 const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
 const {
   attachAuthenticatedUser,
@@ -54,6 +55,7 @@ function createApp() {
   app.use('/auth', authRoutes);
   app.use(attachAuthenticatedUser);
   app.use('/api/households', householdRoutes);
+  app.use('/api/households', leaderboardRoutes);
   app.use('/api/households', weeklyBoardRoutes);
 
   app.get('/health', async (request, response) => {
