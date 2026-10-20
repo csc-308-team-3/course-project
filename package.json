@@ -10,7 +10,8 @@
     "db:check": "node server/checkDatabase.js",
     "lint": "eslint .",
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "dev:all": "concurrently \"npm run dev\" \"npm --prefix frontend run dev\""
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   "homepage": "https://github.com/csc-308-team-3/course-project#readme",
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "concurrently": "^10.0.6",
     "eslint": "^9.39.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
