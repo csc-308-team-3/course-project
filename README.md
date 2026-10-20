@@ -78,6 +78,14 @@ The backend provides these session-based endpoints:
 
 Passwords are stored only as bcrypt hashes. The browser receives an HTTP-only session cookie after a successful registration or login.
 
+### Household leaderboard API
+
+- `GET /api/households/:householdId/leaderboard`
+
+This endpoint is available only to authenticated members of the requested household.  
+Scoring rule: each completed chore assigned to a roommate is worth **1 point**.  
+Rankings use score descending with dense ties (equal points share the same rank).
+
 ## Figma Storyboard Link
 
 https://www.figma.com/proto/U7m0HnNWwKcZakiTlvs2xr/Wireframe-Example?node-id=0-1&t=qmyFBSCaSR7sL4gN-1
