@@ -5,6 +5,7 @@ const session = require('express-session');
 const { checkDatabaseConnection, getPool } = require('./db');
 const authRoutes = require('./routes/auth');
 const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 
 function createApp() {
   const sessionSecret = process.env.SESSION_SECRET;
@@ -66,6 +67,8 @@ function createApp() {
       });
     }
   });
+
+  app.use('/api/profile', profileRoutes); //profile routes
 
   return app;
 }
