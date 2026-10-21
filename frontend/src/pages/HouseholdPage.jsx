@@ -17,6 +17,7 @@ function HouseholdPage() {
   const [boardError, setBoardError] = useState('');
   const [boardLoading, setBoardLoading] = useState(true);
   const { household } = useHousehold();
+  const [copyMessage, setCopyMessage] = useState('');
 
   useEffect(() => {
     async function loadBoard() {
@@ -45,6 +46,17 @@ function HouseholdPage() {
 
     loadBoard();
   }, [household.id, selectedWeek]);
+
+  async function handleCopyCode() {
+    try {
+      await navigator.clipboard.writeText(household.inviteCode);
+      setCopyMessage('Copied!');
+    } catch {
+      setCopyMessage('Copy failed');
+    }
+
+    window.setTimeout(() => setCopyMessage(''), 2000);
+  }
 
   function statusClass(status) {
     if (status === 'todo') return 'todo-task';
@@ -112,6 +124,14 @@ function HouseholdPage() {
 
             <p className="group-code">
               Group code: <strong>{household.inviteCode}</strong>
+              <button
+                type="button"
+                className="copy-code-button"
+                onClick={handleCopyCode}
+                title={copyMessage || 'Copy group code'}
+                aria-label={copyMessage || 'Copy group code'}>
+                {copyMessage === 'Copied!' ? '✓' : '⧉'}
+              </button>
             </p>
           </div>
         </section>
