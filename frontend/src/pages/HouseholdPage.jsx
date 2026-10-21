@@ -130,7 +130,7 @@ function HouseholdPage() {
                 onClick={handleCopyCode}
                 title={copyMessage || 'Copy group code'}
                 aria-label={copyMessage || 'Copy group code'}>
-                {copyMessage ? '✓' : '⧉'}
+                {copyMessage === 'Copied!' ? '✓' : '⧉'}
               </button>
             </p>
           </div>
