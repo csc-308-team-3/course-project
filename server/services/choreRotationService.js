@@ -1,3 +1,6 @@
+const { randomUUID } = require('node:crypto');
+const { getPool } = require('../db');
+
 const validRecurrenceFrequencies = new Set([ // only allow these values for recurrence_frequency
   'daily',
   'weekly',
@@ -79,6 +82,13 @@ function getOccurrenceDates(frequency, recurrenceStartDate, startDate, endDate) 
     );
   }
 
+  if (!isValidDate(recurrenceStartDate)) {
+    throw new ChoreRotationServiceError( // throws error if recurrence start date is not valid
+      400,
+      'A recurring chore needs a valid recurrence start date.',
+    );
+  }
+
   const recurrenceStart = createDate(recurrenceStartDate);
   const occurrences = []; // array to hold occurrence dates
   let occurrenceNumber = 0; // counter for the number of occurrences
@@ -95,13 +105,13 @@ function getOccurrenceDates(frequency, recurrenceStartDate, startDate, endDate) 
     occurrenceNumber += 1; // increment that the chore has occurred one more time
 
     if (frequency === 'daily') { 
-      // Calculate the date one day after the start date for each occurrence.
+      // Calculate the next daily due date from the recurrence start date.
       dueDate = addDays(recurrenceStart, occurrenceNumber);
     } else if (frequency === 'weekly') {
-      // Calculate the date 7 days after the start date for each occurrence.
+      // Calculate the next weekly due date from the recurrence start date.
       dueDate = addDays(recurrenceStart, occurrenceNumber * 7);
     } else {
-      // Calculate the date one month after the start date for each occurrence.
+      // Calculate the next monthly due date from the recurrence start date.
       dueDate = addMonths(recurrenceStart, occurrenceNumber);
     }
   }
@@ -109,8 +119,224 @@ function getOccurrenceDates(frequency, recurrenceStartDate, startDate, endDate) 
   return occurrences; // returns the array of occurrence dates
 }
 
+async function withTransaction(work) {
+  const client = await getPool().connect();
+
+  try {
+    await client.query('BEGIN');
+    const result = await work(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function requireHouseholdMember(client, userId, householdId) {
+  const result = await client.query(
+    'SELECT household_id FROM users WHERE id = $1 FOR UPDATE',
+    [userId],
+  );
+
+  if (!result.rows[0]) {
+    throw new ChoreRotationServiceError(401, 'Authentication is required.');
+  }
+
+  if (result.rows[0].household_id !== householdId) {
+    throw new ChoreRotationServiceError(
+      403,
+      'You are not a member of this household.',
+    );
+  }
+}
+
+async function getRecurringChores(client, householdId) {
+  const result = await client.query(
+    `
+      SELECT
+        id,
+        title,
+        recurrence_frequency AS frequency,
+        TO_CHAR(recurrence_start_date, 'YYYY-MM-DD') AS "recurrenceStartDate"
+      FROM chores
+      WHERE household_id = $1
+        AND recurrence_frequency IN ('daily', 'weekly', 'monthly')
+      FOR UPDATE
+    `,
+    [householdId],
+  );
+
+  return result.rows;
+}
+
+async function getRotationMembers(client, choreId, householdId) {
+  const result = await client.query(
+    `
+      SELECT chore_rotations.user_id AS "userId"
+      FROM chore_rotations
+      JOIN users ON users.id = chore_rotations.user_id
+      WHERE chore_rotations.chore_id = $1
+        AND users.household_id = $2
+      ORDER BY chore_rotations.position
+    `,
+    [choreId, householdId],
+  );
+
+  return result.rows;
+}
+
+async function getHouseholdMembers(client, householdId) {
+  const result = await client.query(
+    `
+      SELECT id AS "userId"
+      FROM users
+      WHERE household_id = $1
+      ORDER BY name, id
+    `,
+    [householdId],
+  );
+
+  return result.rows;
+}
+
+async function getOrCreateRotationMembers(client, choreId, householdId) {
+  const existingMembers = await getRotationMembers(
+    client,
+    choreId,
+    householdId,
+  );
+
+  if (existingMembers.length > 0) {
+    return existingMembers;
+  }
+
+  const householdMembers = await getHouseholdMembers(client, householdId);
+
+  for (let position = 0; position < householdMembers.length; position += 1) {
+    await client.query(
+      `
+        INSERT INTO chore_rotations (
+          chore_id,
+          user_id,
+          "position"
+        )
+        VALUES ($1, $2, $3)
+        ON CONFLICT DO NOTHING
+      `,
+      [choreId, householdMembers[position].userId, position],
+    );
+  }
+
+  return getRotationMembers(client, choreId, householdId);
+}
+
+async function createInstanceIfMissing(client, choreId, assigneeId, dueDate) {
+  const result = await client.query(
+    `
+      INSERT INTO chore_instances (
+        id,
+        chore_id,
+        assignee_id,
+        due_date,
+        status
+      )
+      SELECT $1, $2, $3, $4::date, 'assigned'
+      WHERE NOT EXISTS (
+        SELECT 1
+        FROM chore_instances
+        WHERE chore_id = $2
+          AND due_date = $4::date
+      )
+      RETURNING
+        id,
+        chore_id AS "choreId",
+        assignee_id AS "assigneeId",
+        TO_CHAR(due_date, 'YYYY-MM-DD') AS "dueDate"
+    `,
+    [randomUUID(), choreId, assigneeId, dueDate],
+  );
+
+  return result.rows[0] ?? null;
+}
+
+async function generateChoreRotations(userId, householdId, dateRange) {
+  const { start, end } = validateDateRange(
+    dateRange?.startDate,
+    dateRange?.endDate,
+  );
+
+  return withTransaction(async (client) => {
+    await requireHouseholdMember(client, userId, householdId);
+
+    const chores = await getRecurringChores(client, householdId);
+    const generatedAssignments = [];
+    const skippedChores = [];
+
+    for (const chore of chores) {
+      if (!chore.recurrenceStartDate) {
+        skippedChores.push({
+          choreId: chore.id,
+          reason: 'This chore does not have a recurrence start date.',
+        });
+        continue;
+      }
+
+      const rotationMembers = await getOrCreateRotationMembers(
+        client,
+        chore.id,
+        householdId,
+      );
+
+      if (rotationMembers.length === 0) {
+        skippedChores.push({
+          choreId: chore.id,
+          reason: 'This chore does not have a rotation order.',
+        });
+        continue;
+      }
+
+      const occurrences = getOccurrenceDates(
+        chore.frequency,
+        chore.recurrenceStartDate,
+        start,
+        end,
+      );
+
+      for (const occurrence of occurrences) {
+        const rotationIndex =
+          occurrence.occurrenceNumber % rotationMembers.length;
+        const assignee = rotationMembers[rotationIndex];
+
+        const instance = await createInstanceIfMissing(
+          client,
+          chore.id,
+          assignee.userId,
+          occurrence.dueDate,
+        );
+
+        if (instance) {
+          generatedAssignments.push({
+            ...instance,
+            title: chore.title,
+          });
+        }
+      }
+    }
+
+    return {
+      generatedCount: generatedAssignments.length,
+      generatedAssignments,
+      skippedChores,
+    };
+  });
+}
+
 module.exports = { // exports the functions and error class for use in other files
   ChoreRotationServiceError,
+  generateChoreRotations,
   getOccurrenceDates,
   validateDateRange,
 };

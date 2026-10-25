@@ -4,6 +4,7 @@ const express = require('express');
 const session = require('express-session');
 const { checkDatabaseConnection, getPool } = require('./db');
 const authRoutes = require('./routes/auth');
+const choreRotationRoutes = require('./routes/choreRotationRoutes');
 const householdRoutes = require('./routes/householdRoutes');
 const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
 const {
@@ -53,6 +54,7 @@ function createApp() {
 
   app.use('/auth', authRoutes);
   app.use(attachAuthenticatedUser);
+  app.use('/api/households', choreRotationRoutes);
   app.use('/api/households', householdRoutes);
   app.use('/api/households', weeklyBoardRoutes);
 
