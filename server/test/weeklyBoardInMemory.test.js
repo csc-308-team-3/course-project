@@ -44,7 +44,9 @@ describe('weekly board with an in-memory PostgreSQL database', () => {
         id uuid PRIMARY KEY,
         household_id uuid NOT NULL,
         title text NOT NULL,
-        recurrence_frequency text
+        category text,
+        recurrence_frequency text,
+        recurrence_start_date date
       )
     `);
 
@@ -70,9 +72,9 @@ describe('weekly board with an in-memory PostgreSQL database', () => {
     );
 
     await pool.query(
-      `INSERT INTO chores (id, household_id, title, recurrence_frequency)
-       VALUES ($1, $2, $3, $4)`,
-      [choreId, householdId, 'Fix Wi-Fi', 'weekly'],
+      `INSERT INTO chores (id, household_id, title, category, recurrence_frequency, recurrence_start_date)
+      VALUES ($1, $2, $3, $4, $5, $6)`,
+      [choreId, householdId, 'Fix Wi-Fi', 'Technology', 'weekly', '2026-10-12'],
     );
 
     await pool.query(
@@ -106,7 +108,7 @@ describe('weekly board with an in-memory PostgreSQL database', () => {
               {
                 id: instanceId,
                 title: 'Fix Wi-Fi',
-                category: 'weekly',
+                category: 'Technology',
                 dueDate: '2026-10-16',
               },
             ],
