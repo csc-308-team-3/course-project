@@ -31,6 +31,6 @@ Omar’s goal is to keep the household organized without roommates arguing about
 
 ## Non-Functional Requirements
 
-1. ChoreMate should show clear feedback within two seconds after a user does something, such as copying an invite code or updating a chore’s status.
+1. ChoreMate should show clear feedback within two seconds after a user action, such as copying an invite code or updating a chore’s status.
 
 2. ChoreMate should be easy to use on both phones and computers, with buttons and text aligned and readable on different screen sizes.
