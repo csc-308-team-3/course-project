@@ -1,4 +1,4 @@
-jest.mock('../services/householdService', () => {
+jest.mock('../server/services/householdService', () => {
   class HouseholdServiceError extends Error {
     constructor(status, message) {
       super(message);
@@ -16,7 +16,7 @@ jest.mock('../services/householdService', () => {
   };
 });
 
-const householdService = require('../services/householdService');
+const householdService = require('../server/services/householdService');
 const {
   createHousehold,
   getCurrentHousehold,
@@ -25,7 +25,7 @@ const {
   requireAuthenticatedUser,
   requireValidHouseholdId,
   rotateInviteCode,
-} = require('../controllers/householdController');
+} = require('../server/controllers/householdController');
 
 const USER_ID = '11111111-1111-1111-1111-111111111111';
 const HOUSEHOLD_ID = '22222222-2222-2222-2222-222222222222';
