@@ -1,4 +1,4 @@
-const { getWeeklyRange } = require('../utils/week');
+const { getWeeklyRange } = require('../server/utils/week');
 
 describe('getWeeklyRange', () => {
   test('returns the correct Monday-to-Sunday weekly range', () => {

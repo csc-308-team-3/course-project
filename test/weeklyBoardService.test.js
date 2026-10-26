@@ -1,4 +1,4 @@
-const { buildWeeklyBoard } = require('../services/weeklyBoardService');
+const { buildWeeklyBoard } = require('../server/services/weeklyBoardService');
 
 describe('buildWeeklyBoard', () => {
   test('groups chores by roommate and status', () => {

@@ -1,12 +1,12 @@
-jest.mock('../db', () => ({
+jest.mock('../server/db', () => ({
   getPool: jest.fn(),
 }));
 
 const { newDb, DataType } = require('pg-mem');
-const { getPool } = require('../db');
+const { getPool } = require('../server/db');
 const {
   getWeeklyBoard,
-} = require('../controllers/weeklyBoardController');
+} = require('../server/controllers/weeklyBoardController');
 
 function createResponse() {
   const response = {};

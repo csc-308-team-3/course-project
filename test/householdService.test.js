@@ -1,10 +1,10 @@
-jest.mock('../db', () => ({
+jest.mock('../server/db', () => ({
   getPool: jest.fn(),
 }));
 
 const { newDb } = require('pg-mem');
-const { getPool } = require('../db');
-const householdService = require('../services/householdService');
+const { getPool } = require('../server/db');
+const householdService = require('../server/services/householdService');
 
 const HOUSEHOLD_ID = '11111111-1111-1111-1111-111111111111';
 const SECOND_HOUSEHOLD_ID = '22222222-2222-2222-2222-222222222222';
