@@ -168,6 +168,57 @@ test('does not reveal whether an invalid login email exists', async () => {
   expect(response.body.message).toBe('Invalid email or password.');
 });
 
+test('logs in with Google and creates a session', async () => {
+  const controller = createAuthController({
+    async authenticateGoogleUser(credential) {
+      expect(credential).toBe('google-id-token');
+      return {
+        email: 'test@example.com',
+        householdId: null,
+        id: 'user-1',
+        name: 'Test User',
+        score: 0,
+      };
+    },
+  });
+  const request = createRequest({ body: { credential: 'google-id-token' } });
+  const response = createResponse();
+
+  await controller.loginWithGoogle(request, response);
+
+  expect(response.statusCode).toBe(200);
+  expect(request.session.userId).toBe('user-1');
+});
+
+test('rejects a Google sign-in without a credential', async () => {
+  const controller = createAuthController();
+  const response = createResponse();
+
+  await controller.loginWithGoogle(createRequest(), response);
+
+  expect(response.statusCode).toBe(400);
+  expect(response.body.message).toMatch(/credential/i);
+});
+
+test('reports a conflict for an unlinked email account', async () => {
+  const controller = createAuthController({
+    async authenticateGoogleUser() {
+      const error = new Error('existing account');
+      error.code = 'GOOGLE_ACCOUNT_CONFLICT';
+      throw error;
+    },
+  });
+  const response = createResponse();
+
+  await controller.loginWithGoogle(
+    createRequest({ body: { credential: 'google-id-token' } }),
+    response,
+  );
+
+  expect(response.statusCode).toBe(409);
+  expect(response.body.message).toMatch(/password/i);
+});
+
 test('reports an unauthenticated session without looking up a user', async () => {
   let getUserByIdCalled = false;
   const controller = createAuthController({
