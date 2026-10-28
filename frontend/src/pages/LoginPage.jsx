@@ -67,10 +67,10 @@ function LoginPage() {
           ux_mode: 'popup',
         });
         window.google.accounts.id.renderButton(googleButtonRef.current, {
-          logo_alignment: 'center',
-          shape: 'pill',
+          logo_alignment: 'left',
+          shape: 'rectangular',
           size: 'large',
-          text: 'continue_with',
+          text: 'signin_with',
           theme: 'filled_black',
           type: 'standard',
           width: Math.min(400, googleButtonRef.current.clientWidth),
