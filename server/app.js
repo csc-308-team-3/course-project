@@ -8,6 +8,7 @@ const calendarRoutes = require('./routes/calendarRoutes');
 const choreRotationRoutes = require('./routes/choreRotationRoutes');
 const householdRoutes = require('./routes/householdRoutes');
 const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 const {
   attachAuthenticatedUser,
 } = require('./middleware/attachAuthenticatedUser');
@@ -76,6 +77,8 @@ function createApp() {
       });
     }
   });
+
+  app.use('/api/profile', profileRoutes); //profile routes
 
   return app;
 }
