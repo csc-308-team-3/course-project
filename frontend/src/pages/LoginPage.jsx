@@ -67,11 +67,13 @@ function LoginPage() {
           ux_mode: 'popup',
         });
         window.google.accounts.id.renderButton(googleButtonRef.current, {
+          logo_alignment: 'center',
           shape: 'rectangular',
           size: 'large',
-          text: 'continue_with',
+          text: 'signin_with',
           theme: 'outline',
-          width: googleButtonRef.current.clientWidth,
+          type: 'standard',
+          width: Math.min(400, googleButtonRef.current.clientWidth),
         });
       })
       .catch(() => {
