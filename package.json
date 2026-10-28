@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "jest": {
+    "testMatch": [
+      "<rootDir>/test/**/*.test.js"
+    ]
+  },
   "scripts": {
     "test": "jest --runInBand",
     "start": "node server/server.js",
