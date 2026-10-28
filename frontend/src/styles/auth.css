@@ -47,14 +47,12 @@
 .google-signin {
   display: flex;
   justify-content: center;
-  min-height: 48px;
+  min-height: 40px;
   width: 100%;
 }
 
 .google-signin > div {
-  max-width: 400px;
-  transform: scale(1.1);
-  transform-origin: center;
+  width: 100%;
 }
 
 .create-account {

@@ -71,7 +71,7 @@ function LoginPage() {
           shape: 'rectangular',
           size: 'large',
           text: 'signin_with',
-          theme: 'filled_black',
+          theme: 'outline',
           type: 'standard',
           width: Math.min(400, googleButtonRef.current.clientWidth),
         });
