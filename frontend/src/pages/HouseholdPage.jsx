@@ -3,16 +3,66 @@ import { Link } from 'react-router-dom';
 import LogoutButton from '../components/LogoutButton';
 import { useHousehold } from '../context/HouseholdContext';
 
-const weekOptions = [
-  { value: '2026-09-28', label: 'Week of September 28 – October 4' },
-  { value: '2026-10-05', label: 'Week of October 5 – October 11' },
-  { value: '2026-10-12', label: 'Week of October 12 – October 18' },
-  { value: '2026-10-19', label: 'Week of October 19 – October 25' },
-  { value: '2026-10-26', label: 'Week of October 26 – November 1' },
-];
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function addDays(date, days) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+function getCurrentWeekStart() {
+  const today = new Date();
+  const weekStart = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  );
+
+  const daysSinceMonday = (weekStart.getDay() + 6) % 7;
+  weekStart.setDate(weekStart.getDate() - daysSinceMonday);
+
+  return weekStart;
+}
+
+function formatWeekLabel(weekStart) {
+  const weekEnd = addDays(weekStart, 6);
+
+  const startLabel = weekStart.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+  });
+  const endLabel = weekEnd.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+  });
+
+  return `Week of ${startLabel} – ${endLabel}`;
+}
+
+function getWeekOptions() {
+  const currentWeekStart = getCurrentWeekStart();
+
+  return [-2, -1, 0, 1, 2].map((weekOffset) => {
+    const weekStart = addDays(currentWeekStart, weekOffset * 7);
+
+    return {
+      value: formatDate(weekStart),
+      label: formatWeekLabel(weekStart),
+    };
+  });
+}
 
 function HouseholdPage() {
-  const [selectedWeek, setSelectedWeek] = useState('2026-10-12');
+  const weekOptions = getWeekOptions();
+  const [selectedWeek, setSelectedWeek] = useState(() =>
+    formatDate(getCurrentWeekStart()), );
   const [board, setBoard] = useState(null);
   const [boardError, setBoardError] = useState('');
   const [boardLoading, setBoardLoading] = useState(true);
@@ -76,6 +126,9 @@ function HouseholdPage() {
             <button type="button" className="nav-button active-nav-button">
               Household
             </button>
+            <Link className="nav-button" to="/calendar">
+              Calendar
+            </Link>
             <Link className="nav-button" to="/awards">
               Awards
             </Link>
