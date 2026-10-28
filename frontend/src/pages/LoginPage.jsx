@@ -67,6 +67,7 @@ function LoginPage() {
           ux_mode: 'popup',
         });
         window.google.accounts.id.renderButton(googleButtonRef.current, {
+          logo_alignment: 'left',
           shape: 'rectangular',
           size: 'large',
           text: 'continue_with',
