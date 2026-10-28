@@ -1,5 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
-import LogoutButton from '../components/LogoutButton';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import { useHousehold } from '../context/HouseholdContext';
 
 function ProfilePage() {
@@ -24,25 +24,7 @@ function ProfilePage() {
       <div className="sparkle sparkle-two">✦</div>
 
       <section className="app-card profile-card">
-        <header className="household-nav">
-          <div className="household-brand">
-            <div className="brand-mark">⌂</div>
-            <strong>ChoreMate</strong>
-          </div>
-
-          <nav className="nav-actions">
-            <Link className="nav-button" to="/household">
-              Household
-            </Link>
-            <Link className="nav-button" to="/awards">
-                Awards
-            </Link>
-            <Link className="nav-button active-nav-button" to="/profile">
-              Profile
-            </Link>
-            <LogoutButton />
-          </nav>
-        </header>
+        <Navbar />
 
         <section className="profile-hero">
           <div className="profile-avatar">GC</div>
@@ -50,12 +32,13 @@ function ProfilePage() {
           <div>
             <p className="eyebrow">YOUR PROFILE</p>
             <h1 className="profile-name">Gary Chiu</h1>
-            <p className="page-subtitle">
-              Member of Gary Chiu's House
-            </p>
+            <p className="page-subtitle">Member of Gary Chiu's House</p>
           </div>
 
-          <button type="button" className="secondary-button profile-edit-button">
+          <button
+            type="button"
+            className="secondary-button profile-edit-button"
+          >
             Edit profile
           </button>
         </section>
@@ -107,7 +90,8 @@ function ProfilePage() {
                     onClick={handleLeaveHousehold}
                   >
                     Leave household <span>›</span>
-                  </button> )}
+                  </button>
+                )}
               </div>
             </section>
           </div>

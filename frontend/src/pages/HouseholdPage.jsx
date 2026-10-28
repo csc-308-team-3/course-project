@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import LogoutButton from '../components/LogoutButton';
+import Navbar from '../components/Navbar';
 import { useHousehold } from '../context/HouseholdContext';
 
 function formatDate(date) {
@@ -62,7 +61,8 @@ function getWeekOptions() {
 function HouseholdPage() {
   const weekOptions = getWeekOptions();
   const [selectedWeek, setSelectedWeek] = useState(() =>
-    formatDate(getCurrentWeekStart()), );
+    formatDate(getCurrentWeekStart()),
+  );
   const [board, setBoard] = useState(null);
   const [boardError, setBoardError] = useState('');
   const [boardLoading, setBoardLoading] = useState(true);
@@ -128,28 +128,7 @@ function HouseholdPage() {
       <div className="sparkle sparkle-two">✦</div>
 
       <section className="app-card household-card">
-        <header className="household-nav">
-          <div className="household-brand">
-            <div className="brand-mark">⌂</div>
-            <strong>ChoreMate</strong>
-          </div>
-
-          <nav className="nav-actions">
-            <button type="button" className="nav-button active-nav-button">
-              Household
-            </button>
-            <Link className="nav-button" to="/calendar">
-              Calendar
-            </Link>
-            <Link className="nav-button" to="/awards">
-              Awards
-            </Link>
-            <Link className="nav-button" to="/profile">
-              Profile
-            </Link>
-            <LogoutButton />
-          </nav>
-        </header>
+        <Navbar />
 
         <section className="board-intro">
           <p className="eyebrow">HOUSEHOLD CHORE BOARD</p>
@@ -182,7 +161,8 @@ function HouseholdPage() {
                 className="copy-code-button"
                 onClick={handleCopyCode}
                 title={copyMessage || 'Copy group code'}
-                aria-label={copyMessage || 'Copy group code'}>
+                aria-label={copyMessage || 'Copy group code'}
+              >
                 {copyMessage === 'Copied!' ? '✓' : '⧉'}
               </button>
             </p>

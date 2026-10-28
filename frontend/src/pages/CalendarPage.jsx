@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import LogoutButton from '../components/LogoutButton';
+import Navbar from '../components/Navbar';
 import { useHousehold } from '../context/HouseholdContext';
 
 function formatDate(date) {
@@ -140,28 +139,7 @@ function CalendarPage() {
       <div className="sparkle sparkle-two">✦</div>
 
       <section className="app-card household-card calendar-card">
-        <header className="household-nav">
-          <div className="household-brand">
-            <div className="brand-mark">⌂</div>
-            <strong>ChoreMate</strong>
-          </div>
-
-          <nav className="nav-actions">
-            <Link className="nav-button" to="/household">
-              Household
-            </Link>
-            <button type="button" className="nav-button active-nav-button">
-              Calendar
-            </button>
-            <Link className="nav-button" to="/awards">
-              Awards
-            </Link>
-            <Link className="nav-button" to="/profile">
-              Profile
-            </Link>
-            <LogoutButton />
-          </nav>
-        </header>
+        <Navbar />
 
         <section className="board-intro calendar-intro">
           <p className="eyebrow">HOUSEHOLD CHORE CALENDAR</p>
@@ -227,8 +205,10 @@ function CalendarPage() {
 
               {calendarDays.map((day, index) =>
                 day ? (
-                  <article className={`calendar-day${day.isToday ? ' calendar-day-today' : ''}`}
-                        key={day.date} >
+                  <article
+                    className={`calendar-day${day.isToday ? ' calendar-day-today' : ''}`}
+                    key={day.date}
+                  >
                     <strong>{day.dayNumber}</strong>
 
                     <div className="calendar-chore-list">
