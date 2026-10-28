@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import LogoutButton from '../components/LogoutButton';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import { useHousehold } from '../context/HouseholdContext';
 
 function NoHouseholdPage() {
@@ -51,25 +51,7 @@ function NoHouseholdPage() {
       <div className="sparkle sparkle-two">✦</div>
 
       <section className="app-card no-household-card">
-        <header className="household-nav">
-          <div className="household-brand">
-            <div className="brand-mark">⌂</div>
-            <strong>ChoreMate</strong>
-          </div>
-
-          <nav className="nav-actions">
-            <Link className="nav-button active-nav-button" to="/no-household">
-              Household
-            </Link>
-            <Link className="nav-button" to="/awards">
-              Awards
-            </Link>
-            <Link className="nav-button" to="/profile">
-              Profile
-            </Link>
-            <LogoutButton />
-          </nav>
-        </header>
+        <Navbar />
 
         <div className="no-household-content">
           <p className="eyebrow">WELCOME TO CHOREMATE</p>
