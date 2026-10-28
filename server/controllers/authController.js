@@ -1,4 +1,5 @@
 const {
+  authenticateGoogleUser,
   authenticateUser,
   createUser,
   getUserById,
@@ -37,6 +38,8 @@ function regenerateSession(request) {
 
 function createAuthController(authService = {}) {
   const createAccount = authService.createUser ?? createUser;
+  const verifyGoogleCredential =
+    authService.authenticateGoogleUser ?? authenticateGoogleUser;
   const verifyCredentials = authService.authenticateUser ?? authenticateUser;
   const findUserById = authService.getUserById ?? getUserById;
 
@@ -101,6 +104,36 @@ function createAuthController(authService = {}) {
     }
   }
 
+  async function loginWithGoogle(request, response) {
+    const { credential } = request.body ?? {};
+
+    if (typeof credential !== 'string' || credential.length === 0) {
+      return response
+        .status(400)
+        .json({ message: 'Google sign-in credential is required.' });
+    }
+
+    try {
+      const user = await verifyGoogleCredential(credential);
+      await regenerateSession(request);
+      request.session.userId = user.id;
+      await saveSession(request);
+      return response.status(200).json({ user });
+    } catch (error) {
+      if (error.code === 'GOOGLE_ACCOUNT_CONFLICT') {
+        return response.status(409).json({
+          message:
+            'An account with that email already exists. Sign in with your password.',
+        });
+      }
+
+      console.error('Google login failed.', { code: error.code });
+      return response
+        .status(401)
+        .json({ message: 'Unable to sign in with Google.' });
+    }
+  }
+
   function logout(request, response) {
     request.session.destroy((error) => {
       if (error) {
@@ -135,7 +168,7 @@ function createAuthController(authService = {}) {
     }
   }
 
-  return { getSession, login, logout, register };
+  return { getSession, login, loginWithGoogle, logout, register };
 }
 
 module.exports = { ...createAuthController(), createAuthController };
