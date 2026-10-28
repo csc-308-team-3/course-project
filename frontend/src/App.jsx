@@ -9,6 +9,7 @@ import NoHouseholdPage from './pages/NoHouseholdPage';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import AwardsPage from './pages/AwardsPage';
+import AddChorePage from './pages/AddChorePage';
 
 function HouseholdRoute() {
   const { user } = useAuth();
@@ -57,6 +58,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <HouseholdRoute />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/household/chores/new"
+                element={
+                  <ProtectedRoute>
+                    <AddChorePage />
                   </ProtectedRoute>
                 }
               />
