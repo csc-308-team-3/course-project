@@ -67,7 +67,7 @@ function LoginPage() {
           ux_mode: 'popup',
         });
         window.google.accounts.id.renderButton(googleButtonRef.current, {
-          logo_alignment: 'left',
+          logo_alignment: 'center',
           shape: 'rectangular',
           size: 'large',
           text: 'signin_with',
