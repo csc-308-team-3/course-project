@@ -4,6 +4,7 @@ import { ChoreProvider } from './context/ChoreContext';
 import { HouseholdProvider, useHousehold } from './context/HouseholdContext';
 import ChoreDetailsPage from './pages/ChoreDetailsPage';
 import HouseholdPage from './pages/HouseholdPage';
+import CalendarPage from './pages/CalendarPage';
 import LoginPage from './pages/LoginPage';
 import NoHouseholdPage from './pages/NoHouseholdPage';
 import ProfilePage from './pages/ProfilePage';
@@ -20,6 +21,21 @@ function HouseholdRoute() {
 
   return user?.householdId || hasHousehold ? (
     <HouseholdPage />
+  ) : (
+    <Navigate to="/no-household" replace />
+  );
+}
+
+function CalendarRoute() {
+  const { user } = useAuth();
+  const { hasHousehold, loading } = useHousehold();
+
+  if (loading) {
+    return <main className="app-page">Loading household...</main>;
+  }
+
+  return user?.householdId || hasHousehold ? (
+    <CalendarPage />
   ) : (
     <Navigate to="/no-household" replace />
   );
@@ -57,6 +73,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <HouseholdRoute />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/calendar"
+                element={
+                  <ProtectedRoute>
+                    <CalendarRoute />
                   </ProtectedRoute>
                 }
               />
