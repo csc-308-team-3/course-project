@@ -44,10 +44,12 @@
   margin: 0;
 }
 
-.google-icon {
-  color: #4285f4;
-  font-weight: 900;
-  margin-right: 9px;
+.google-signin {
+  min-height: 40px;
+}
+
+.google-signin > div {
+  margin: 0 auto;
 }
 
 .create-account {
