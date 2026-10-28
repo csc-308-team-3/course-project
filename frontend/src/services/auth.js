@@ -26,6 +26,13 @@ export function login(credentials) {
   });
 }
 
+export function loginWithGoogle(credential) {
+  return request('/auth/google', {
+    method: 'POST',
+    body: JSON.stringify({ credential }),
+  });
+}
+
 export function register(details) {
   return request('/auth/register', {
     method: 'POST',
