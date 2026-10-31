@@ -23,6 +23,8 @@ function validBody() {
     dueDate: '2026-10-26',
     recurrenceFrequency: 'one-time',
     recurrenceStartDate: null,
+    estimatedDuration: 15,
+    dueTime: '18:30',
   };
 }
 
@@ -121,13 +123,20 @@ test.each([
     'recurrence date on a one-time chore',
     { recurrenceStartDate: '2026-10-26' },
   ],
+  ['missing duration', { estimatedDuration: undefined }],
+  ['zero duration', { estimatedDuration: 0 }],
+  ['negative duration', { estimatedDuration: -1 }],
+  ['fractional duration', { estimatedDuration: 1.5 }],
+  ['duration supplied as text', { estimatedDuration: '15' }],
+  ['duration outside integer range', { estimatedDuration: 2147483648 }],
+  ['missing due time', { dueTime: undefined }],
+  ['invalid hour', { dueTime: '24:00' }],
+  ['invalid minute', { dueTime: '18:60' }],
+  ['invalid time format', { dueTime: '6:30 PM' }],
 ])('rejects %s before calling the service', async (_label, changes) => {
   const response = createResponse();
 
-  await createChore(
-    createRequest({ ...validBody(), ...changes }),
-    response,
-  );
+  await createChore(createRequest({ ...validBody(), ...changes }), response);
 
   expect(response.status).toHaveBeenCalledWith(400);
   expect(response.json).toHaveBeenCalledWith({

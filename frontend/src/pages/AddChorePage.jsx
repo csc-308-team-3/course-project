@@ -13,14 +13,22 @@ function validateForm(form, members) {
   if (!form.category.trim()) errors.push('Enter a category.');
   if (!form.instructions.trim()) errors.push('Enter instructions.');
 
+  const duration = Number(form.estimatedDuration);
+
+  if (!Number.isInteger(duration) || duration < 1 || duration > 2147483647) {
+    errors.push('Enter a positive whole number of minutes.');
+  }
+
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(form.dueTime)) {
+    errors.push('Enter a valid due time.');
+  }
+
   if (!members.includes(form.assigneeId)) {
     errors.push('Choose a roommate from your household.');
   }
 
   const dueDate =
-    form.type === 'recurring'
-      ? form.recurrenceStartDate
-      : form.dueDate;
+    form.type === 'recurring' ? form.recurrenceStartDate : form.dueDate;
 
   try {
     getWeekStart(dueDate);
@@ -52,6 +60,8 @@ function AddChorePage() {
     category: '',
     assigneeId: '',
     instructions: '',
+    estimatedDuration: 15,
+    dueTime: '',
     dueDate: '',
     type: 'one-time',
     frequency: 'weekly',
@@ -87,9 +97,7 @@ function AddChorePage() {
     }
 
     const recurring = form.type === 'recurring';
-    const dueDate = recurring
-      ? form.recurrenceStartDate
-      : form.dueDate;
+    const dueDate = recurring ? form.recurrenceStartDate : form.dueDate;
 
     setErrors([]);
     setIsSubmitting(true);
@@ -99,14 +107,12 @@ function AddChorePage() {
         title: form.title.trim(),
         category: form.category.trim(),
         instructions: form.instructions.trim(),
+        estimatedDuration: Number(form.estimatedDuration),
+        dueTime: form.dueTime,
         assigneeId: form.assigneeId,
         dueDate,
-        recurrenceFrequency: recurring
-          ? form.frequency
-          : 'one-time',
-        recurrenceStartDate: recurring
-          ? form.recurrenceStartDate
-          : null,
+        recurrenceFrequency: recurring ? form.frequency : 'one-time',
+        recurrenceStartDate: recurring ? form.recurrenceStartDate : null,
       });
     } catch (error) {
       setErrors([error.message || 'Unable to create chore.']);
@@ -148,9 +154,7 @@ function AddChorePage() {
 
         <p className="eyebrow">HOUSEHOLD CHORES</p>
         <h1 className="page-title">Add chore</h1>
-        <p className="page-subtitle">
-          Create a chore for {household.name}.
-        </p>
+        <p className="page-subtitle">Create a chore for {household.name}.</p>
 
         <form
           className="add-chore-form"
@@ -213,6 +217,30 @@ function AddChorePage() {
               name="instructions"
               rows={4}
               value={form.instructions}
+              onChange={handleChange}
+              required
+            />
+
+            <label htmlFor="chore-duration">Estimated duration (minutes)</label>
+            <input
+              id="chore-duration"
+              name="estimatedDuration"
+              type="number"
+              min="1"
+              max="2147483647"
+              step="1"
+              value={form.estimatedDuration}
+              onChange={handleChange}
+              required
+            />
+
+            <label htmlFor="chore-due-time">Due time</label>
+            <input
+              id="chore-due-time"
+              name="dueTime"
+              type="time"
+              step="60"
+              value={form.dueTime}
               onChange={handleChange}
               required
             />
