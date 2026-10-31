@@ -82,6 +82,8 @@ async function fillCommonFields(user) {
     screen.getByLabelText('Instructions'),
     'Wash and put away the dishes.',
   );
+  await user.type(screen.getByLabelText('Estimated duration (minutes)'), '15');
+  await user.type(screen.getByLabelText('Due time'), '18:30');
 }
 
 async function fillOneTimeChore(user) {
@@ -126,6 +128,8 @@ test('submits a one-time chore and navigates to its week', async () => {
     dueDate: '2026-10-28',
     recurrenceFrequency: 'one-time',
     recurrenceStartDate: null,
+    estimatedDuration: 15,
+    dueTime: '18:30',
   });
 });
 
@@ -145,6 +149,12 @@ test.each(['daily', 'weekly', 'monthly'])(
       screen.getByLabelText(/Recurrence start date/),
       '2026-10-28',
     );
+
+    expect(screen.getByLabelText('Estimated duration (minutes)')).toHaveValue(
+      15,
+    );
+    expect(screen.getByLabelText('Due time')).toHaveValue('18:30');
+
     await user.click(screen.getByRole('button', { name: 'Save chore' }));
 
     await screen.findByRole('heading', {
@@ -155,6 +165,8 @@ test.each(['daily', 'weekly', 'monthly'])(
       recurrenceFrequency: frequency,
       recurrenceStartDate: '2026-10-28',
       dueDate: '2026-10-28',
+      estimatedDuration: 15,
+      dueTime: '18:30',
     });
   },
 );
@@ -191,6 +203,8 @@ test('shows missing-field errors without sending a request', async () => {
   expect(alert).toHaveTextContent('Choose a roommate');
   expect(alert).toHaveTextContent('Enter a valid due date.');
   expect(fetchMock).not.toHaveBeenCalled();
+  expect(alert).toHaveTextContent('Enter a positive whole number of minutes.');
+  expect(alert).toHaveTextContent('Enter a valid due time.');
 });
 
 test('requires a start date for recurring chores', async () => {
@@ -357,4 +371,40 @@ test('returns to the real board and fetches the saved chore week', async () => {
   expect(
     await screen.findByRole('heading', { name: 'Wash dishes' }),
   ).toBeInTheDocument();
+});
+
+test.each(['0', '-1', '1.5', '2147483648'])(
+  'rejects invalid estimated duration %s',
+  async (duration) => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await fillOneTimeChore(user);
+
+    const input = screen.getByLabelText('Estimated duration (minutes)');
+    await user.clear(input);
+    await user.type(input, duration);
+
+    await user.click(screen.getByRole('button', { name: 'Save chore' }));
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Enter a positive whole number of minutes.',
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+  },
+);
+
+test('requires a due time before submitting', async () => {
+  const user = userEvent.setup();
+  renderPage();
+
+  await fillOneTimeChore(user);
+  await user.clear(screen.getByLabelText('Due time'));
+
+  await user.click(screen.getByRole('button', { name: 'Save chore' }));
+
+  expect(screen.getByRole('alert')).toHaveTextContent(
+    'Enter a valid due time.',
+  );
+  expect(fetchMock).not.toHaveBeenCalled();
 });
