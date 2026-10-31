@@ -12,6 +12,7 @@ const profileRoutes = require('./routes/profileRoutes');
 const {
   attachAuthenticatedUser,
 } = require('./middleware/attachAuthenticatedUser');
+const choreHistoryRoutes = require('./routes/choreHistoryRoutes');
 
 function createApp() {
   const sessionSecret = process.env.SESSION_SECRET;
@@ -56,6 +57,7 @@ function createApp() {
 
   app.use('/auth', authRoutes);
   app.use(attachAuthenticatedUser);
+  app.use('/api/households', choreHistoryRoutes);
   app.use('/api/households', choreRotationRoutes);
   app.use('/api/households', householdRoutes);
   app.use('/api/households', weeklyBoardRoutes);
