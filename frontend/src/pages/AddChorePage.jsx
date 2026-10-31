@@ -60,7 +60,7 @@ function AddChorePage() {
     category: '',
     assigneeId: '',
     instructions: '',
-    estimatedDuration: 15,
+    estimatedDuration: '',
     dueTime: '',
     dueDate: '',
     type: 'one-time',
