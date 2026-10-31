@@ -24,6 +24,8 @@ const body = {
   dueDate: '2026-10-26',
   recurrenceFrequency: 'one-time',
   recurrenceStartDate: null,
+  estimatedDuration: 15,
+  dueTime: '18:30',
 };
 
 let server;
@@ -127,9 +129,7 @@ test('returns validation errors through the HTTP endpoint', async () => {
   expect(response.status).toBe(400);
   expect(await response.json()).toEqual({
     error: 'Invalid chore.',
-    details: expect.arrayContaining([
-      'title must be a non-empty string.',
-    ]),
+    details: expect.arrayContaining(['title must be a non-empty string.']),
   });
   expect(choreService.createChore).not.toHaveBeenCalled();
 });
