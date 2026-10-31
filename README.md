@@ -78,6 +78,29 @@ The backend provides these session-based endpoints:
 
 Passwords are stored only as bcrypt hashes. The browser receives an HTTP-only session cookie after a successful registration or login.
 
+### Chore history and statistics API
+
+All endpoints require an authenticated household member.
+
+- POST /api/households/:householdId/chore-instances/:instanceId/complete
+  - No request body is required.
+  - Only the assigned member can complete the instance.
+  - Repeated requests preserve the original completion timestamp.
+  - Returns HTTP 200 with an instance.
+- GET /api/households/:householdId/chores/:choreId/history
+  - Returns completed instances, newest first.
+  - Supports limit (1–100, default 50) and offset (default 0).
+  - History includes memberId, memberName, and completedAt.
+- GET /api/households/:householdId/chore-statistics?month=YYYY-MM
+  - Counts completions using UTC calendar-month boundaries.
+  - Includes current household members with zero completions.
+  - Excludes departed members from monthly member statistics.
+
+History uses chore_instances.completed_at as its source of truth.
+Legacy completed records without timestamps are excluded.
+This is not an immutable audit log: deleting a chore can delete its history.
+Reopening chores, scoring, and frontend integration are outside this change.
+
 ## Figma Storyboard Link
 
 https://www.figma.com/proto/U7m0HnNWwKcZakiTlvs2xr/Wireframe-Example?node-id=0-1&t=qmyFBSCaSR7sL4gN-1
