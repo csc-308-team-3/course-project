@@ -10,6 +10,8 @@ import NoHouseholdPage from './pages/NoHouseholdPage';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import AwardsPage from './pages/AwardsPage';
+import ChoreStatisticsPage from './pages/ChoreStatisticsPage';
+import ChoreHistoryPage from './pages/ChoreHistoryPage';
 
 function HouseholdRoute() {
   const { user } = useAuth();
@@ -105,6 +107,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <AwardsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chores/:choreId/statistics"
+                element={
+                  <ProtectedRoute>
+                    <ChoreStatisticsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chores/:choreId/history"
+                element={
+                  <ProtectedRoute>
+                    <ChoreHistoryPage />
                   </ProtectedRoute>
                 }
               />

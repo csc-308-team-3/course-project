@@ -34,6 +34,12 @@ function Navbar() {
         </NavLink>
         <NavLink
           className={({ isActive }) => navButtonClass(isActive)}
+          to="/household/statistics"
+        >
+          Statistics
+        </NavLink>
+        <NavLink
+          className={({ isActive }) => navButtonClass(isActive)}
           to="/awards"
         >
           Awards
