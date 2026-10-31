@@ -19,6 +19,8 @@ const validInput = {
   dueDate: '2026-10-26',
   recurrenceFrequency: 'one-time',
   recurrenceStartDate: null,
+  estimatedDuration: 15,
+  dueTime: '18:30',
 };
 
 let pool;
@@ -37,28 +39,31 @@ beforeEach(async () => {
       name text NOT NULL
     );
 
-    CREATE TABLE chores (
-      id uuid PRIMARY KEY,
-      household_id uuid NOT NULL,
-      title text NOT NULL,
-      category text,
-      instructions text,
-      recurrence_frequency text NOT NULL,
-      recurrence_start_date date
-    );
+CREATE TABLE chores (
+  id uuid PRIMARY KEY,
+  household_id uuid NOT NULL,
+  title text NOT NULL,
+  category text,
+  instructions text NOT NULL,
+  estimated_duration integer NOT NULL CHECK (estimated_duration > 0),
+  recurrence_frequency text NOT NULL,
+  recurrence_start_date date
+);
 
     CREATE TABLE chore_instances (
-      id uuid PRIMARY KEY,
-      chore_id uuid NOT NULL REFERENCES chores(id),
-      assignee_id uuid NOT NULL REFERENCES users(id),
-      due_date date NOT NULL,
-      status text NOT NULL
-    );
+  id uuid PRIMARY KEY,
+  chore_id uuid NOT NULL REFERENCES chores(id),
+  assignee_id uuid NOT NULL REFERENCES users(id),
+  due_date date NOT NULL,
+  due_time time NOT NULL,
+  status text NOT NULL,
+  completed_at timestamp with time zone
+);
 
     CREATE TABLE chore_rotations (
       chore_id uuid NOT NULL REFERENCES chores(id),
       user_id uuid NOT NULL REFERENCES users(id),
-      position integer NOT NULL,
+      position integer NOT NULL CHECK (position > 0),
       PRIMARY KEY (chore_id, user_id),
       UNIQUE (chore_id, position)
     );
@@ -78,11 +83,7 @@ afterEach(async () => {
 });
 
 test('saves a one-time chore and its first assignment', async () => {
-  const result = await createChore(
-    CREATOR_ID,
-    HOUSEHOLD_ID,
-    validInput,
-  );
+  const result = await createChore(CREATOR_ID, HOUSEHOLD_ID, validInput);
 
   const chores = await pool.query('SELECT * FROM chores');
   const instances = await pool.query('SELECT * FROM chore_instances');
@@ -104,11 +105,17 @@ test('saves a one-time chore and its first assignment', async () => {
     assignee_id: ASSIGNEE_ID,
     status: 'assigned',
   });
-  expect(
-    new Date(instances.rows[0].due_date).toISOString().slice(0, 10),
-  ).toBe(validInput.dueDate);
+  expect(new Date(instances.rows[0].due_date).toISOString().slice(0, 10)).toBe(
+    validInput.dueDate,
+  );
 
   expect(rotations.rows).toHaveLength(0);
+
+  expect(chores.rows[0].estimated_duration).toBe(15);
+  expect(instances.rows[0].due_time).toBe('18:30:00');
+
+  expect(result.chore.estimatedDuration).toBe(15);
+  expect(result.instance.dueTime).toBe('18:30');
 });
 
 test.each(['daily', 'weekly', 'monthly'])(
@@ -127,14 +134,12 @@ test.each(['daily', 'weekly', 'monthly'])(
 
     expect(chores.rows[0].recurrence_frequency).toBe(frequency);
     expect(
-      new Date(chores.rows[0].recurrence_start_date)
-        .toISOString()
-        .slice(0, 10),
+      new Date(chores.rows[0].recurrence_start_date).toISOString().slice(0, 10),
     ).toBe(validInput.dueDate);
 
     expect(rotations.rows).toEqual([
-      { user_id: ASSIGNEE_ID, position: 0 },
-      { user_id: CREATOR_ID, position: 1 },
+      { user_id: ASSIGNEE_ID, position: 1 },
+      { user_id: CREATOR_ID, position: 2 },
     ]);
 
     expect(result.instance.assigneeId).toBe(ASSIGNEE_ID);
@@ -151,10 +156,10 @@ test('rejects creation in another household without inserting a chore', async ()
 });
 
 test('rejects an assignee from another household', async () => {
-  await pool.query(
-    'UPDATE users SET household_id = $1 WHERE id = $2',
-    [OTHER_HOUSEHOLD_ID, ASSIGNEE_ID],
-  );
+  await pool.query('UPDATE users SET household_id = $1 WHERE id = $2', [
+    OTHER_HOUSEHOLD_ID,
+    ASSIGNEE_ID,
+  ]);
 
   await expect(
     createChore(CREATOR_ID, HOUSEHOLD_ID, validInput),

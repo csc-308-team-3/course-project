@@ -38,9 +38,7 @@ async function createChore(userId, householdId, input) {
       );
     }
 
-    const assignee = users.rows.find(
-      (user) => user.id === input.assigneeId,
-    );
+    const assignee = users.rows.find((user) => user.id === input.assigneeId);
 
     if (!assignee || assignee.household_id !== householdId) {
       throw new ChoreServiceError(
@@ -53,16 +51,17 @@ async function createChore(userId, householdId, input) {
 
     await client.query(
       `INSERT INTO chores (
-         id, household_id, title, category, instructions,
-         recurrence_frequency, recurrence_start_date
-       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+     id, household_id, title, category, instructions,
+     estimated_duration, recurrence_frequency, recurrence_start_date
+   )
+   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         choreId,
         householdId,
         input.title,
         input.category,
         input.instructions,
+        input.estimatedDuration,
         input.recurrenceFrequency,
         input.recurrenceStartDate,
       ],
@@ -73,19 +72,21 @@ async function createChore(userId, householdId, input) {
       choreId,
       assigneeId: input.assigneeId,
       dueDate: input.dueDate,
+      dueTime: input.dueTime,
       status: 'assigned',
     };
 
     await client.query(
       `INSERT INTO chore_instances (
-         id, chore_id, assignee_id, due_date, status
+         id, chore_id, assignee_id, due_date, due_time, status
        )
-       VALUES ($1, $2, $3, $4, $5)`,
+       VALUES ($1, $2, $3, $4, $5, $6)`,
       [
         instance.id,
         choreId,
         instance.assigneeId,
         instance.dueDate,
+        instance.dueTime,
         instance.status,
       ],
     );
@@ -111,7 +112,7 @@ async function createChore(userId, householdId, input) {
         await client.query(
           `INSERT INTO chore_rotations (chore_id, user_id, "position")
            VALUES ($1, $2, $3)`,
-          [choreId, rotationOrder[position], position],
+          [choreId, rotationOrder[position], position + 1],
         );
       }
     }
@@ -125,6 +126,7 @@ async function createChore(userId, householdId, input) {
         title: input.title,
         category: input.category,
         instructions: input.instructions,
+        estimatedDuration: input.estimatedDuration,
         recurrenceFrequency: input.recurrenceFrequency,
         recurrenceStartDate: input.recurrenceStartDate,
       },
