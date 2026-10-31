@@ -359,3 +359,81 @@ test('rolls back and releases the connection after a database error', async () =
   expect(client.query).toHaveBeenLastCalledWith('ROLLBACK');
   expect(client.release).toHaveBeenCalledTimes(1);
 });
+
+test.each([
+  [
+    '2026-12',
+    '2026-12-01T00:00:00.000Z',
+    '2026-12-31T23:59:59.999Z',
+    '2027-01-01T00:00:00.000Z',
+  ],
+  [
+    '2028-02',
+    '2028-02-01T00:00:00.000Z',
+    '2028-02-29T23:59:59.999Z',
+    '2028-03-01T00:00:00.000Z',
+  ],
+])(
+  'aggregates boundary completions correctly for %s',
+  async (month, first, last, nextMonth) => {
+    await addInstance({ completedAt: first });
+    await addInstance({ completedAt: last });
+    await addInstance({ completedAt: nextMonth });
+
+    const result = await service.getMonthlyStatistics(
+      ALEX,
+      HOUSE,
+      getMonthRange(month),
+    );
+
+    expect(result.members).toEqual([
+      { memberId: ALEX, memberName: 'Alex', completedCount: 2 },
+      { memberId: SAM, memberName: 'Sam', completedCount: 0 },
+    ]);
+  },
+);
+
+test('repeating completion counts the instance only once', async () => {
+  const id = await addInstance({
+    completedAt: '2026-10-15T12:00:00.000Z',
+  });
+
+  await service.completeChoreInstance(ALEX, HOUSE, id);
+  await service.completeChoreInstance(ALEX, HOUSE, id);
+
+  const result = await service.getMonthlyStatistics(
+    ALEX,
+    HOUSE,
+    getMonthRange('2026-10'),
+  );
+
+  expect(
+    result.members.find((member) => member.memberId === ALEX),
+  ).toMatchObject({ completedCount: 1 });
+});
+
+test('history pages do not repeat entries with identical timestamps', async () => {
+  const firstId = await addInstance({
+    completedAt: '2026-10-15T12:00:00.000Z',
+  });
+  const secondId = await addInstance({
+    completedAt: '2026-10-15T12:00:00.000Z',
+  });
+
+  const firstPage = await service.getChoreHistory(ALEX, HOUSE, CHORE, {
+    limit: 1,
+    offset: 0,
+  });
+  const secondPage = await service.getChoreHistory(ALEX, HOUSE, CHORE, {
+    limit: 1,
+    offset: 1,
+  });
+
+  const ids = [
+    firstPage.history[0].instanceId,
+    secondPage.history[0].instanceId,
+  ];
+
+  expect(new Set(ids).size).toBe(2);
+  expect(ids.slice().sort()).toEqual([firstId, secondId].sort());
+});

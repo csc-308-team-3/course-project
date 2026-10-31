@@ -47,5 +47,10 @@
     "express-session": "^1.19.0",
     "google-auth-library": "^11.3.1",
     "pg": "^8.23.1"
+  },
+  "jest": {
+    "testMatch": [
+      "<rootDir>/test/**/*.test.js"
+    ]
   }
 }

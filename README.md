@@ -101,6 +101,25 @@ Legacy completed records without timestamps are excluded.
 This is not an immutable audit log: deleting a chore can delete its history.
 Reopening chores, scoring, and frontend integration are outside this change.
 
+### History/statistics testing
+
+Run backend tests:
+
+    npm test
+
+Run frontend tests:
+
+    npm --prefix frontend test
+
+Backend coverage includes household authorization, completion history,
+repeat completion, monthly aggregation, UTC boundaries, and pagination.
+
+Frontend coverage includes summaries, empty/error states, retry,
+history pagination, household changes, and obsolete request handling.
+
+These tests use pg-mem and simulated HTTP responses. They do not
+replace live PostgreSQL or real session-cookie integration testing.
+
 ## Figma Storyboard Link
 
 https://www.figma.com/proto/U7m0HnNWwKcZakiTlvs2xr/Wireframe-Example?node-id=0-1&t=qmyFBSCaSR7sL4gN-1
