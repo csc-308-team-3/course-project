@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useHousehold } from '../context/HouseholdContext';
+import { Link } from 'react-router-dom';
+import '../styles/chore-history.css';
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -147,6 +149,7 @@ function CalendarPage() {
           <p className="page-subtitle">
             See what is coming up and keep everyone on the same page.
           </p>
+          <p>Choose a chore to view its completion history.</p>
         </section>
 
         <section className="calendar-section">
@@ -214,7 +217,13 @@ function CalendarPage() {
                     <div className="calendar-chore-list">
                       {(choresByDate[day.date] ?? []).map((chore) => (
                         <p className="calendar-chore" key={chore.id}>
-                          {chore.title}
+                          <Link
+                            className="calendar-history-link"
+                            to={`/household/chores/${chore.choreId}/history`}
+                            aria-label={`View completion history for ${chore.title}`}
+                          >
+                            {chore.title}
+                          </Link>
                         </p>
                       ))}
                     </div>
