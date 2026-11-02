@@ -1,18 +1,39 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import LogoutButton from '../components/LogoutButton';
 import { useHousehold } from '../context/HouseholdContext';
+import { getToday, getWeekStart } from '../services/chores';
+import '../styles/add-chore.css';
 
-const weekOptions = [
-  { value: '2026-09-28', label: 'Week of September 28 – October 4' },
-  { value: '2026-10-05', label: 'Week of October 5 – October 11' },
-  { value: '2026-10-12', label: 'Week of October 12 – October 18' },
-  { value: '2026-10-19', label: 'Week of October 19 – October 25' },
-  { value: '2026-10-26', label: 'Week of October 26 – November 1' },
-];
+function buildWeekOptions(selectedWeek) {
+  return [-2, -1, 0, 1, 2].map((offset) => {
+    const start = new Date(`${selectedWeek}T00:00:00Z`);
+    start.setUTCDate(start.getUTCDate() + offset * 7);
+
+    const end = new Date(start);
+    end.setUTCDate(end.getUTCDate() + 6);
+
+    const format = (date) =>
+      date.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        timeZone: 'UTC',
+      });
+
+    return {
+      value: start.toISOString().slice(0, 10),
+      label: `${format(start)} – ${format(end)}`,
+    };
+  });
+}
 
 function HouseholdPage() {
-  const [selectedWeek, setSelectedWeek] = useState('2026-10-12');
+  const location = useLocation();
+  const [selectedWeek, setSelectedWeek] = useState(
+    () => location.state?.weekStart ?? getWeekStart(getToday()),
+  );
+  const weekOptions = buildWeekOptions(selectedWeek);
   const [board, setBoard] = useState(null);
   const [boardError, setBoardError] = useState('');
   const [boardLoading, setBoardLoading] = useState(true);
@@ -86,6 +107,12 @@ function HouseholdPage() {
           </nav>
         </header>
 
+        {location.state?.choreCreated && (
+          <p className="chore-success" role="status">
+            Chore created successfully.
+          </p>
+        )}
+
         <section className="board-intro">
           <p className="eyebrow">HOUSEHOLD CHORE BOARD</p>
           <h1 className="board-title">{household.name}</h1>
@@ -126,9 +153,13 @@ function HouseholdPage() {
               </h2>
             </div>
 
-            <button type="button" className="small-primary-button">
+            <Link
+              to="/household/chores/new"
+              className="small-primary-button"
+              style={{ textDecoration: 'none' }}
+            >
               + Add chore
-            </button>
+            </Link>
           </div>
 
           <div className="chore-board">
