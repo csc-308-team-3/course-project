@@ -62,7 +62,29 @@ async function saveWeeklyAnnouncement(request, response) {
   }
 }
 
+// Delete the announcement for the selected week.
+async function deleteWeeklyAnnouncement(request, response) {
+  const weekStartError = validateWeekStart(request.query.weekStart);
+
+  if (weekStartError) {
+    return response.status(400).json({ error: weekStartError });
+  }
+
+  try {
+    await announcementService.deleteWeeklyAnnouncement(
+      request.user.id,
+      request.params.householdId,
+      request.query.weekStart,
+    );
+
+    return response.status(204).send();
+  } catch (error) {
+    return handleError(response, error);
+  }
+}
+
 module.exports = {
+  deleteWeeklyAnnouncement,
   getWeeklyAnnouncement,
   saveWeeklyAnnouncement,
 };
