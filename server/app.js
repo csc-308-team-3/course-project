@@ -3,6 +3,7 @@ const cors = require('cors');
 const express = require('express');
 const session = require('express-session');
 const { checkDatabaseConnection, getPool } = require('./db');
+const announcementRoutes = require('./routes/announcementRoutes');
 const authRoutes = require('./routes/auth');
 const calendarRoutes = require('./routes/calendarRoutes');
 const choreRotationRoutes = require('./routes/choreRotationRoutes');
@@ -56,6 +57,7 @@ function createApp() {
 
   app.use('/auth', authRoutes);
   app.use(attachAuthenticatedUser);
+  app.use('/api/households', announcementRoutes);
   app.use('/api/households', choreRotationRoutes);
   app.use('/api/households', householdRoutes);
   app.use('/api/households', weeklyBoardRoutes);
