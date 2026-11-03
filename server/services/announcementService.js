@@ -90,8 +90,23 @@ async function saveWeeklyAnnouncement(userId, householdId, announcement) {
   return result.rows[0];
 }
 
+// Remove the announcement for one household and one selected week.
+async function deleteWeeklyAnnouncement(userId, householdId, weekStart) {
+  await requireHouseholdMember(userId, householdId);
+
+  await getPool().query(
+    `
+      DELETE FROM weekly_announcements
+      WHERE household_id = $1
+        AND week_start = $2::date
+    `,
+    [householdId, weekStart],
+  );
+}
+
 module.exports = {
   AnnouncementServiceError,
+  deleteWeeklyAnnouncement,
   getWeeklyAnnouncement,
   saveWeeklyAnnouncement,
 };
