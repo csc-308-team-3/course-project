@@ -5,6 +5,7 @@ jest.mock('../server/db', () => ({
 const { newDb, DataType } = require('pg-mem');
 const { getPool } = require('../server/db');
 const {
+  deleteWeeklyAnnouncement,
   getWeeklyAnnouncement,
   saveWeeklyAnnouncement,
 } = require('../server/services/announcementService');
@@ -109,11 +110,31 @@ describe('weekly announcements with an in-memory PostgreSQL database', () => {
 
     expect(noAnnouncement).toBeNull();
 
-    const count = await pool.query(
+    const countBeforeDelete = await pool.query(
       'SELECT COUNT(*) AS total FROM weekly_announcements',
     );
 
-    expect(count.rows[0].total).toBe(1);
+    expect(countBeforeDelete.rows[0].total).toBe(1);
+
+    await deleteWeeklyAnnouncement(
+      userId,
+      householdId,
+      '2026-11-02',
+    );
+
+    const deletedAnnouncement = await getWeeklyAnnouncement(
+      userId,
+      householdId,
+      '2026-11-02',
+    );
+
+    expect(deletedAnnouncement).toBeNull();
+
+    const countAfterDelete = await pool.query(
+      'SELECT COUNT(*) AS total FROM weekly_announcements',
+    );
+
+    expect(countAfterDelete.rows[0].total).toBe(0);
 
     await pool.end();
   });

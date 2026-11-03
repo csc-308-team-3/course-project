@@ -9,6 +9,7 @@ jest.mock('../server/services/announcementService', () => {
 
   return {
     AnnouncementServiceError,
+    deleteWeeklyAnnouncement: jest.fn(),
     getWeeklyAnnouncement: jest.fn(),
     saveWeeklyAnnouncement: jest.fn(),
   };
@@ -16,6 +17,7 @@ jest.mock('../server/services/announcementService', () => {
 
 const announcementService = require('../server/services/announcementService');
 const {
+  deleteWeeklyAnnouncement,
   getWeeklyAnnouncement,
   saveWeeklyAnnouncement,
 } = require('../server/controllers/announcementController');
@@ -23,6 +25,7 @@ const {
 function createResponse() {
   const response = {};
 
+  response.send = jest.fn().mockReturnValue(response);
   response.status = jest.fn().mockReturnValue(response);
   response.json = jest.fn().mockReturnValue(response);
 
@@ -153,5 +156,30 @@ describe('weekly announcement controller', () => {
     expect(response.json).toHaveBeenCalledWith({
       error: 'You are not a member of this household.',
     });
+  });
+
+  test('deletes an announcement for a valid household and week', async () => {
+    const householdId = '11111111-1111-1111-1111-111111111111';
+    const userId = '22222222-2222-2222-2222-222222222222';
+
+    announcementService.deleteWeeklyAnnouncement.mockResolvedValue();
+
+    const request = {
+      user: { id: userId },
+      params: { householdId },
+      query: { weekStart: '2026-11-02' },
+    };
+    const response = createResponse();
+
+    await deleteWeeklyAnnouncement(request, response);
+
+    expect(announcementService.deleteWeeklyAnnouncement).toHaveBeenCalledWith(
+      userId,
+      householdId,
+      '2026-11-02',
+    );
+
+    expect(response.status).toHaveBeenCalledWith(204);
+    expect(response.send).toHaveBeenCalledWith();
   });
 });
