@@ -158,32 +158,47 @@ function HouseholdPage() {
 
   async function saveAnnouncement(event) {
     event.preventDefault();
+
+    const message = announcementDraft.trim();
+    const isDeletingAnnouncement = !message;
+
     setAnnouncementSaving(true);
     setAnnouncementError('');
 
     try {
       const response = await fetch(
-        `/api/households/${household.id}/announcements`,
+        isDeletingAnnouncement
+          ? `/api/households/${household.id}/announcements?weekStart=${selectedWeek}`
+          : `/api/households/${household.id}/announcements`,
         {
-          method: 'PUT',
+          method: isDeletingAnnouncement ? 'DELETE' : 'PUT',
           credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            weekStart: selectedWeek,
-            message: announcementDraft,
-          }),
+          headers: isDeletingAnnouncement
+            ? undefined
+            : { 'Content-Type': 'application/json' },
+          body: isDeletingAnnouncement
+            ? undefined
+            : JSON.stringify({
+                weekStart: selectedWeek,
+                message,
+              }),
         },
       );
-      const data = await response.json();
 
       if (!response.ok) {
+        const data = await response.json();
         throw new Error(data.error || 'Unable to save the announcement.');
       }
 
-      setAnnouncement(data.announcement);
-      setAnnouncementDraft(data.announcement.message);
+      if (isDeletingAnnouncement) {
+        setAnnouncement(null);
+        setAnnouncementDraft('');
+      } else {
+        const data = await response.json();
+        setAnnouncement(data.announcement);
+        setAnnouncementDraft(data.announcement.message);
+      }
+
       setIsEditingAnnouncement(false);
     } catch (error) {
       setAnnouncementError(error.message);
@@ -276,9 +291,11 @@ function HouseholdPage() {
 
               {!announcementLoading && !isEditingAnnouncement && (
                 <>
-                  <h2 className="announcement-message">
-                    {announcement?.message || 'No announcement for this week yet.'}
-                  </h2>
+                  {announcement ? (
+                    <h2 className="announcement-message">{announcement.message}</h2>
+                  ) : (
+                    <div className="announcement-empty-space" aria-hidden="true" />
+                  )}
                 </>
               )}
 

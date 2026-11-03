@@ -1353,3 +1353,7 @@ input:focus {
   font-weight: 700;
   margin: 12px 0 0;
 }
+
+.announcement-empty-space {
+  min-height: 42px;
+}
