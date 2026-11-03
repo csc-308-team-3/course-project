@@ -1,5 +1,6 @@
 const express = require('express');
 const {
+  deleteWeeklyAnnouncement,
   getWeeklyAnnouncement,
   saveWeeklyAnnouncement,
 } = require('../controllers/announcementController');
@@ -25,6 +26,13 @@ router.put(
   '/:householdId/announcements',
   requireValidHouseholdId,
   saveWeeklyAnnouncement,
+);
+
+// Delete the announcement for one selected week.
+router.delete(
+  '/:householdId/announcements',
+  requireValidHouseholdId,
+  deleteWeeklyAnnouncement,
 );
 
 module.exports = router;
