@@ -317,12 +317,16 @@ function HouseholdPage() {
                     placeholder="Write this week's announcement..."
                     maxLength="75"
                     aria-label="Weekly announcement"
+                    style={{ marginBottom: 0 }}
                   />
 
-                  <div className="announcement-form-actions">
+                  <div
+                    className="announcement-form-actions"
+                    style={{ display: 'flex', gap: '20px', marginTop: '10px' }}
+                  >
                     <button
                       type="submit"
-                      className="small-primary-button"
+                      className="text-button"
                       disabled={announcementSaving}
                     >
                       {announcementSaving ? 'Saving...' : 'Save'}
