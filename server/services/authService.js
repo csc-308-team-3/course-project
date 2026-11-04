@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const { OAuth2Client } = require('google-auth-library');
 const { getPool } = require('../db');
 
 const passwordRounds = 12;
@@ -51,6 +50,10 @@ function getGoogleClientId() {
 }
 
 async function authenticateGoogleUser(credential) {
+  // Load this optional provider only when Google sign-in is requested. This
+  // keeps password authentication available when a local install is missing
+  // the Google OAuth dependency after a merge.
+  const { OAuth2Client } = require('google-auth-library');
   const ticket = await new OAuth2Client().verifyIdToken({
     idToken: credential,
     audience: getGoogleClientId(),

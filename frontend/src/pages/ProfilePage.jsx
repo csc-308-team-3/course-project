@@ -1,21 +1,153 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
+import { getProfile, updateProfile } from '../services/profile';
+
+function getInitials(name = '') {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .map((word) => word[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function formatMonthAndYear(dateValue) {
+  if (!dateValue) {
+    return 'Not in a household yet';
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(dateValue));
+}
 
 function ProfilePage() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const { hasHousehold, leaveHousehold } = useHousehold();
 
+  const [profile, setProfile] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const data = await getProfile();
+
+        setProfile(data.profile);
+        setForm({
+          name: data.profile.name,
+          email: data.profile.email,
+        });
+      } catch (loadError) {
+        setError(loadError.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadProfile();
+  }, []);
+
+  function handleFormChange(event) {
+    const { name, value } = event.target;
+
+    setForm((currentForm) => ({
+      ...currentForm,
+      [name]: value,
+    }));
+  }
+
+  function startEditing() {
+    setForm({
+      name: profile.name,
+      email: profile.email,
+    });
+    setError('');
+    setIsEditing(true);
+  }
+
+  function cancelEditing() {
+    setForm({
+      name: profile.name,
+      email: profile.email,
+    });
+    setError('');
+    setIsEditing(false);
+  }
+
+  async function handleSave(event) {
+    event.preventDefault();
+    setError('');
+    setIsSaving(true);
+
+    try {
+      const data = await updateProfile(form);
+
+      setProfile(data.profile);
+      setForm({
+        name: data.profile.name,
+        email: data.profile.email,
+      });
+
+      // Update the signed-in user stored in AuthContext too.
+      setUser((currentUser) => ({
+        ...currentUser,
+        name: data.profile.name,
+        email: data.profile.email,
+      }));
+
+      setIsEditing(false);
+    } catch (saveError) {
+      setError(saveError.message);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
   function handleLeaveHousehold() {
+    const householdName = profile?.household?.name ?? 'this household';
+
     const shouldLeave = window.confirm(
-      'Are you sure you want to leave Gary Chiu’s House?',
+      `Are you sure you want to leave ${householdName}?`,
     );
 
     if (shouldLeave) {
+      // This currently changes only frontend state.
+      // Do not present it as permanent until a backend leave-household endpoint exists.
       leaveHousehold();
       navigate('/no-household');
     }
   }
+
+  if (isLoading) {
+    return (
+      <main className="app-page profile-page">
+        <p>Loading profile…</p>
+      </main>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <main className="app-page profile-page">
+        <p>{error || 'Unable to load your profile.'}</p>
+      </main>
+    );
+  }
+
   return (
     <main className="app-page profile-page">
       <div className="bubble bubble-one" />
@@ -27,21 +159,80 @@ function ProfilePage() {
         <Navbar />
 
         <section className="profile-hero">
-          <div className="profile-avatar">GC</div>
+          <div className="profile-avatar">{getInitials(profile.name)}</div>
 
           <div>
             <p className="eyebrow">YOUR PROFILE</p>
-            <h1 className="profile-name">Gary Chiu</h1>
-            <p className="page-subtitle">Member of Gary Chiu's House</p>
+            <h1 className="profile-name">{profile.name}</h1>
+            <p className="page-subtitle">
+              {profile.household
+                ? `Member of ${profile.household.name}`
+                : 'Not currently in a household'}
+            </p>
           </div>
 
           <button
             type="button"
             className="secondary-button profile-edit-button"
+            onClick={startEditing}
           >
             Edit profile
           </button>
         </section>
+
+        {error && <p className="form-error">{error}</p>}
+
+        {isEditing && (
+          <section className="profile-section">
+            <p className="eyebrow">EDIT PROFILE</p>
+            <h2>Update account details</h2>
+
+            <form className="profile-info-card" onSubmit={handleSave}>
+              <label>
+                Name
+                <input
+                  name="name"
+                  type="text"
+                  value={form.name}
+                  onChange={handleFormChange}
+                  minLength="1"
+                  maxLength="100"
+                  required
+                />
+              </label>
+
+              <label>
+                Email
+                <input
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleFormChange}
+                  required
+                />
+              </label>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={cancelEditing}
+                  disabled={isSaving}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="primary-button"
+                  disabled={isSaving}
+                >
+                  {isSaving ? 'Saving…' : 'Save changes'}
+                </button>
+              </div>
+            </form>
+          </section>
+        )}
 
         <div className="profile-layout">
           <div>
@@ -52,19 +243,24 @@ function ProfilePage() {
               <div className="profile-info-card">
                 <div className="info-row">
                   <span>Email</span>
-                  <strong>gary@example.com</strong>
+                  <strong>{profile.email}</strong>
                 </div>
+
                 <div className="info-row">
-                  <span>Member since</span>
-                  <strong>October 2026</strong>
+                  <span>Household member since</span>
+                  <strong>
+                    {formatMonthAndYear(profile.household?.joinedAt)}
+                  </strong>
                 </div>
+
                 <div className="info-row">
                   <span>Chores completed</span>
-                  <strong>12</strong>
+                  <strong>{profile.completedChoreCount}</strong>
                 </div>
+
                 <div className="info-row">
                   <span>Household</span>
-                  <strong>Gary Chiu's House</strong>
+                  <strong>{profile.household?.name ?? 'None'}</strong>
                 </div>
               </div>
             </section>
@@ -74,15 +270,18 @@ function ProfilePage() {
               <h2>Preferences</h2>
 
               <div className="settings-list">
-                <button type="button" className="setting-row">
-                  Notification preferences <span>›</span>
+                <button type="button" className="setting-row" disabled>
+                  Notification preferences <span>Coming soon</span>
                 </button>
-                <button type="button" className="setting-row">
-                  Change password <span>›</span>
+
+                <button type="button" className="setting-row" disabled>
+                  Change password <span>Coming soon</span>
                 </button>
-                <button type="button" className="setting-row">
-                  Privacy settings <span>›</span>
+
+                <button type="button" className="setting-row" disabled>
+                  Privacy settings <span>Coming soon</span>
                 </button>
+
                 {hasHousehold && (
                   <button
                     type="button"
@@ -105,22 +304,6 @@ function ProfilePage() {
               <div>
                 <strong>The First of Many</strong>
                 <p>Completed your first chore</p>
-              </div>
-            </div>
-
-            <div className="award-item">
-              <span>✨</span>
-              <div>
-                <strong>Streak Starter</strong>
-                <p>Three-week chore streak</p>
-              </div>
-            </div>
-
-            <div className="award-item">
-              <span>🧼</span>
-              <div>
-                <strong>Clean Machine</strong>
-                <p>Keep the common areas fresh</p>
               </div>
             </div>
           </aside>
