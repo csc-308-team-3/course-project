@@ -68,6 +68,12 @@ function HouseholdPage() {
   const [boardLoading, setBoardLoading] = useState(true);
   const { household } = useHousehold();
   const [copyMessage, setCopyMessage] = useState('');
+  const [announcement, setAnnouncement] = useState(null);
+  const [announcementDraft, setAnnouncementDraft] = useState('');
+  const [announcementError, setAnnouncementError] = useState('');
+  const [announcementLoading, setAnnouncementLoading] = useState(true);
+  const [announcementSaving, setAnnouncementSaving] = useState(false);
+  const [isEditingAnnouncement, setIsEditingAnnouncement] = useState(false);
 
   useEffect(() => {
     async function loadBoard() {
@@ -97,6 +103,36 @@ function HouseholdPage() {
     loadBoard();
   }, [household.id, selectedWeek]);
 
+    useEffect(() => {
+    async function loadAnnouncement() {
+      setAnnouncementLoading(true);
+      setAnnouncementError('');
+
+      try {
+        const response = await fetch(
+          `/api/households/${household.id}/announcements?weekStart=${selectedWeek}`,
+          { credentials: 'include' },
+        );
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to load the weekly announcement.');
+        }
+
+        setAnnouncement(data.announcement);
+        setAnnouncementDraft(data.announcement?.message ?? '');
+        setIsEditingAnnouncement(false);
+      } catch (error) {
+        setAnnouncement(null);
+        setAnnouncementError(error.message);
+      } finally {
+        setAnnouncementLoading(false);
+      }
+    }
+
+    loadAnnouncement();
+  }, [household.id, selectedWeek]);
+
   async function handleCopyCode() {
     try {
       await navigator.clipboard.writeText(household.inviteCode);
@@ -106,6 +142,69 @@ function HouseholdPage() {
     }
 
     window.setTimeout(() => setCopyMessage(''), 2000);
+  }
+
+  function startEditingAnnouncement() {
+    setAnnouncementDraft(announcement?.message ?? '');
+    setAnnouncementError('');
+    setIsEditingAnnouncement(true);
+  }
+
+  function cancelEditingAnnouncement() {
+    setAnnouncementDraft(announcement?.message ?? '');
+    setAnnouncementError('');
+    setIsEditingAnnouncement(false);
+  }
+
+  async function saveAnnouncement(event) {
+    event.preventDefault();
+
+    const message = announcementDraft.trim();
+    const isDeletingAnnouncement = !message;
+
+    setAnnouncementSaving(true);
+    setAnnouncementError('');
+
+    try {
+      const response = await fetch(
+        isDeletingAnnouncement
+          ? `/api/households/${household.id}/announcements?weekStart=${selectedWeek}`
+          : `/api/households/${household.id}/announcements`,
+        {
+          method: isDeletingAnnouncement ? 'DELETE' : 'PUT',
+          credentials: 'include',
+          headers: isDeletingAnnouncement
+            ? undefined
+            : { 'Content-Type': 'application/json' },
+          body: isDeletingAnnouncement
+            ? undefined
+            : JSON.stringify({
+                weekStart: selectedWeek,
+                message,
+              }),
+        },
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Unable to save the announcement.');
+      }
+
+      if (isDeletingAnnouncement) {
+        setAnnouncement(null);
+        setAnnouncementDraft('');
+      } else {
+        const data = await response.json();
+        setAnnouncement(data.announcement);
+        setAnnouncementDraft(data.announcement.message);
+      }
+
+      setIsEditingAnnouncement(false);
+    } catch (error) {
+      setAnnouncementError(error.message);
+    } finally {
+      setAnnouncementSaving(false);
+    }
   }
 
   function statusClass(status) {
@@ -171,12 +270,71 @@ function HouseholdPage() {
 
         <section className="board-section">
           <div className="section-heading">
-            <div>
-              <p className="eyebrow">THIS WEEK'S ANNOUNCEMENT:</p>
-              <h2 className="announcement-message">
-                Please Chris Zielke fix the Wi-Fi!!!! We need it for the
-                presentation!
-              </h2>
+            <div className="announcement-content">
+              <div className="announcement-heading">
+                <p className="eyebrow">THIS WEEK'S ANNOUNCEMENT:</p>
+
+                {!announcementLoading && !isEditingAnnouncement && (
+                  <button
+                    type="button"
+                    className="text-button announcement-edit-button"
+                    onClick={startEditingAnnouncement}
+                  >
+                    {announcement ? 'Edit announcement' : 'Add announcement'}
+                  </button>
+                )}
+              </div>
+
+              {announcementLoading && (
+                <p className="announcement-message">Loading announcement...</p>
+              )}
+
+              {!announcementLoading && !isEditingAnnouncement && (
+                <>
+                  {announcement ? (
+                    <h2 className="announcement-message">{announcement.message}</h2>
+                  ) : (
+                    <div className="announcement-empty-space" aria-hidden="true" />
+                  )}
+                </>
+              )}
+
+              {!announcementLoading && isEditingAnnouncement && (
+                <form className="announcement-form" onSubmit={saveAnnouncement}>
+                  <input
+                    className="announcement-input"
+                    type="text"
+                    value={announcementDraft}
+                    onChange={(event) => setAnnouncementDraft(event.target.value)}
+                    placeholder="Write this week's announcement..."
+                    maxLength="75"
+                    aria-label="Weekly announcement"
+                  />
+
+                  <div className="announcement-form-actions">
+                    <button
+                      type="submit"
+                      className="small-primary-button"
+                      disabled={announcementSaving}
+                    >
+                      {announcementSaving ? 'Saving...' : 'Save'}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="text-button"
+                      onClick={cancelEditingAnnouncement}
+                      disabled={announcementSaving}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {announcementError && (
+                <p className="announcement-error">{announcementError}</p>
+              )}
             </div>
 
             <button type="button" className="small-primary-button">

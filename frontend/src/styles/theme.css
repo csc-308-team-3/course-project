@@ -1310,3 +1310,50 @@ input:focus {
   justify-content: center;
   width: 28px;
 }
+
+.announcement-heading {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.announcement-heading .eyebrow {
+  margin: 0;
+}
+
+.announcement-edit-button {
+  white-space: nowrap;
+}
+
+.announcement-form {
+  max-width: 100%;
+}
+
+.announcement-input {
+  background: #f5f7f4;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: var(--text);
+  font: inherit;
+  padding: 14px 16px;
+  width: 100%;
+}
+
+.announcement-form-actions {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.announcement-error {
+  color: #a33d3d;
+  font-weight: 700;
+  margin: 12px 0 0;
+}
+
+.announcement-empty-space {
+  min-height: 42px;
+}
