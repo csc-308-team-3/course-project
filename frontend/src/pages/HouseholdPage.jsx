@@ -274,7 +274,7 @@ function HouseholdPage() {
               <div className="announcement-heading">
                 <p className="eyebrow">THIS WEEK'S ANNOUNCEMENT:</p>
 
-                {!announcementLoading && !isEditingAnnouncement && (
+                {!announcementLoading && !isEditingAnnouncement && announcement && (
                   <button
                     type="button"
                     className="text-button announcement-edit-button"
@@ -294,7 +294,15 @@ function HouseholdPage() {
                   {announcement ? (
                     <h2 className="announcement-message">{announcement.message}</h2>
                   ) : (
-                    <div className="announcement-empty-space" aria-hidden="true" />
+                    <div className="announcement-empty-space">
+                      <button
+                        type="button"
+                        className="small-primary-button announcement-add-button"
+                        onClick={startEditingAnnouncement}
+                      >
+                        + Add announcement
+                      </button>
+                    </div>
                   )}
                 </>
               )}
