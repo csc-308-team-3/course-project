@@ -1164,6 +1164,8 @@ input:focus {
 .form-error {
   color: #b42318;
   margin: 16px 0;
+}
+
 /* calendar */
 
 .calendar-card {
