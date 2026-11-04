@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom';
-import LogoutButton from '../components/LogoutButton';
+import Navbar from '../components/Navbar';
 import { useHousehold } from '../context/HouseholdContext';
 
 const leaderboard = [
-  { rank: 1, name: 'Chris Zielke', initials: 'CZ', points: '1,345', medal: '🥇' },
+  {
+    rank: 1,
+    name: 'Chris Zielke',
+    initials: 'CZ',
+    points: '1,345',
+    medal: '🥇',
+  },
   { rank: 2, name: 'Gary Chiu', initials: 'GC', points: '1,200', medal: '🥈' },
   { rank: 3, name: 'Omar Mohamed', initials: 'OM', points: '100', medal: '🥉' },
 ];
@@ -19,25 +25,7 @@ function AwardsPage() {
       <div className="sparkle sparkle-two">✦</div>
 
       <section className="app-card awards-page-card">
-        <header className="household-nav">
-          <div className="household-brand">
-            <div className="brand-mark">⌂</div>
-            <strong>ChoreMate</strong>
-          </div>
-
-          <nav className="nav-actions">
-            <Link className="nav-button" to="/household">
-              Household
-            </Link>
-            <Link className="nav-button active-nav-button" to="/awards">
-              Awards
-            </Link>
-            <Link className="nav-button" to="/profile">
-              Profile
-            </Link>
-            <LogoutButton />
-          </nav>
-        </header>
+        <Navbar />
 
         {hasHousehold ? (
           <section className="awards-content">
@@ -45,7 +33,8 @@ function AwardsPage() {
               <p className="eyebrow">HOUSEHOLD AWARDS</p>
               <h1 className="page-title">Do your chores, mate!</h1>
               <p className="page-subtitle">
-                Every completed chore earns you points to your household leaderboard.
+                Every completed chore earns you points to your household
+                leaderboard.
               </p>
             </div>
 
@@ -55,7 +44,9 @@ function AwardsPage() {
                 <p>Your score</p>
                 <strong>1,200 points</strong>
               </div>
-              <span className="points-message">145 points from first place</span>
+              <span className="points-message">
+                145 points from first place
+              </span>
             </div>
 
             <section className="leaderboard-card">
@@ -80,7 +71,9 @@ function AwardsPage() {
                   </span>
 
                   <div className="leaderboard-person">
-                    <span className="leaderboard-avatar">{roommate.initials}</span>
+                    <span className="leaderboard-avatar">
+                      {roommate.initials}
+                    </span>
                     <strong>{roommate.name}</strong>
                   </div>
 
@@ -101,7 +94,10 @@ function AwardsPage() {
               leaderboard with your roommates.
             </p>
 
-            <Link className="primary-button awards-join-button" to="/no-household">
+            <Link
+              className="primary-button awards-join-button"
+              to="/no-household"
+            >
               Join a household
             </Link>
           </section>

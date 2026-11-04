@@ -3,9 +3,16 @@ const cors = require('cors');
 const express = require('express');
 const session = require('express-session');
 const { checkDatabaseConnection, getPool } = require('./db');
+const announcementRoutes = require('./routes/announcementRoutes');
 const authRoutes = require('./routes/auth');
+const calendarRoutes = require('./routes/calendarRoutes');
+const choreRotationRoutes = require('./routes/choreRotationRoutes');
+const householdRoutes = require('./routes/householdRoutes');
 const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const {
+  attachAuthenticatedUser,
+} = require('./middleware/attachAuthenticatedUser');
 
 function createApp() {
   const sessionSecret = process.env.SESSION_SECRET;
@@ -49,7 +56,12 @@ function createApp() {
   );
 
   app.use('/auth', authRoutes);
+  app.use(attachAuthenticatedUser);
+  app.use('/api/households', announcementRoutes);
+  app.use('/api/households', choreRotationRoutes);
+  app.use('/api/households', householdRoutes);
   app.use('/api/households', weeklyBoardRoutes);
+  app.use('/api/households', calendarRoutes);
 
   app.get('/health', async (request, response) => {
     try {

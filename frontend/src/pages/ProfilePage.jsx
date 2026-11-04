@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LogoutButton from '../components/LogoutButton';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import { useHousehold } from '../context/HouseholdContext';
 import { getProfile, updateProfile } from '../services/profile';
 
@@ -175,6 +177,7 @@ function ProfilePage() {
             <LogoutButton />
           </nav>
         </header>
+        <Navbar />
 
         <section className="profile-hero">
           <div className="profile-avatar">{getInitials(profile.name)}</div>
@@ -187,6 +190,8 @@ function ProfilePage() {
                 ? `Member of ${profile.household.name}`
                 : 'Not currently in a household'}
             </p>
+            <h1 className="profile-name">Gary Chiu</h1>
+            <p className="page-subtitle">Member of Gary Chiu's House</p>
           </div>
 
           <button

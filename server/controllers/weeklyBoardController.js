@@ -28,7 +28,7 @@ async function getWeeklyBoard(request, response) {
           chore_instances.assignee_id AS "roommateId",
           users.name AS "roommateName",
           chores.title,
-          COALESCE(chores.recurrence_frequency, 'One-time') AS category,
+          COALESCE(chores.category, 'Uncategorized') AS category,
           TO_CHAR(chore_instances.due_date, 'YYYY-MM-DD') AS "dueDate",
           CASE
             WHEN chore_instances.completed_at IS NOT NULL
