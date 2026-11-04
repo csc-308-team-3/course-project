@@ -1383,3 +1383,12 @@ input:focus {
 .announcement-empty-space {
   min-height: 42px;
 }
+
+.announcement-empty-space {
+  display: flex;
+  min-height: 52px;
+}
+
+.announcement-add-button {
+  margin-top: 4px;
+}
