@@ -1112,3 +1112,31 @@ input:focus {
   max-width: 1040px;
   min-height: calc(100vh - 72px);
 }
+
+.profile-info-card label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+  color: var(--text-primary, #222);
+  font-weight: 600;
+}
+
+.profile-info-card input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.form-error {
+  color: #b42318;
+  margin: 16px 0;
+}
