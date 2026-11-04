@@ -1,5 +1,5 @@
 // Keep announcements short enough for the chore-board layout.
-const MAX_ANNOUNCEMENT_LENGTH = 60;
+const MAX_ANNOUNCEMENT_LENGTH = 75;
 
 // Check that a value is a real date written as YYYY-MM-DD.
 function isValidDate(value) {
