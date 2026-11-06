@@ -78,6 +78,42 @@ The backend provides these session-based endpoints:
 
 Passwords are stored only as bcrypt hashes. The browser receives an HTTP-only session cookie after a successful registration or login.
 
+### Create chore API
+
+`POST /api/households/:householdId/chores`
+
+Requires an authenticated household member. The assignee must belong
+to the same household.
+
+Example request:
+
+```json
+{
+  "title": "Wash dishes",
+  "category": "Kitchen",
+  "instructions": "Wash and put away the dishes.",
+  "estimatedDuration": 15,
+  "assigneeId": "33333333-3333-3333-3333-333333333333",
+  "dueDate": "2026-10-30",
+  "dueTime": "18:30",
+  "recurrenceFrequency": "one-time",
+  "recurrenceStartDate": null
+}
+```
+
+`estimatedDuration` is a positive integer measured in minutes.
+`dueTime` uses 24-hour HH:mm format and is stored as a time without
+a timezone.
+
+Recurring chores use daily, weekly, or monthly frequency.
+Their first due date must equal recurrenceStartDate.
+The selected assignee receives rotation position 1.
+
+A successful request returns HTTP 201 with `chore` and `instance`.
+
+The database requires the base schema and the chore-recurrence
+migration, which adds category and recurrence_start_date.
+
 ## Figma Storyboard Link
 
 https://www.figma.com/proto/U7m0HnNWwKcZakiTlvs2xr/Wireframe-Example?node-id=0-1&t=qmyFBSCaSR7sL4gN-1

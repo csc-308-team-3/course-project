@@ -1,4 +1,5 @@
 const express = require('express');
+const { createChore } = require('../controllers/choreController');
 const {
   createHousehold,
   getCurrentHousehold,
@@ -12,6 +13,8 @@ const {
 const router = express.Router();
 
 router.use(requireAuthenticatedUser);
+
+router.post('/:householdId/chores', requireValidHouseholdId, createChore);
 router.post('/', createHousehold);
 router.get('/me', getCurrentHousehold);
 router.post('/join', joinHousehold);
