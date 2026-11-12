@@ -1,3 +1,9 @@
+/*
+ * Authentication page styles.
+ * Controls the login and registration card, password row,
+ * account links, divider, Google sign-in area, and related actions.
+ */
+
 .auth-card {
   max-width: 460px;
 }

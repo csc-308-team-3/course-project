@@ -1,0 +1,225 @@
+/*
+ * Awards page styles.
+ * Controls award cards, award lists, empty states,
+ * and related household achievement content.
+ */
+
+.awards-page {
+  align-items: flex-start;
+  overflow: auto;
+}
+
+.awards-page-card {
+  max-width: 1040px;
+  padding: 30px 38px 42px;
+}
+
+.awards-content {
+  margin: 52px auto 0;
+  max-width: 800px;
+}
+
+.awards-intro {
+  text-align: center;
+}
+
+.awards-intro .page-subtitle {
+  margin-bottom: 30px;
+}
+
+.points-summary {
+  align-items: center;
+  background: var(--mint);
+  border: 1px solid #cce7da;
+  border-radius: 16px;
+  display: flex;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 16px 18px;
+}
+
+.points-icon {
+  align-items: center;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  font-size: 1.35rem;
+  height: 48px;
+  justify-content: center;
+  width: 48px;
+}
+
+.points-summary p {
+  color: var(--muted-text);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0 0 3px;
+}
+
+.points-summary strong {
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+.points-message {
+  color: var(--green);
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin-left: auto;
+}
+
+.leaderboard-card {
+  background: #f5f7f4;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.leaderboard-heading {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 24px 24px 18px;
+}
+
+.leaderboard-heading h2 {
+  color: var(--text);
+  font-family: Georgia, serif;
+  font-size: 1.55rem;
+  margin: 0;
+}
+
+.leaderboard-heading > span {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted-text);
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 7px 10px;
+}
+
+.leaderboard-labels,
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 110px;
+}
+
+.leaderboard-labels {
+  background: rgba(223, 242, 233, 0.55);
+  color: var(--muted-text);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 12px 24px;
+  text-transform: uppercase;
+}
+
+.leaderboard-labels span:last-child {
+  text-align: right;
+}
+
+.leaderboard-row {
+  align-items: center;
+  background: white;
+  border-top: 1px solid var(--border);
+  padding: 15px 24px;
+}
+
+.leaderboard-rank {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.leaderboard-person {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.leaderboard-avatar {
+  align-items: center;
+  background: var(--mint);
+  border-radius: 50%;
+  color: var(--green);
+  display: flex;
+  font-size: 0.78rem;
+  font-weight: 800;
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+}
+
+.leaderboard-points {
+  color: var(--green);
+  text-align: right;
+}
+
+.awards-empty-state {
+  margin: 90px auto 50px;
+  max-width: 570px;
+  text-align: center;
+}
+
+.awards-empty-icon {
+  align-items: center;
+  background: var(--mint);
+  border-radius: 50%;
+  display: flex;
+  font-size: 2rem;
+  height: 88px;
+  justify-content: center;
+  margin: 0 auto 22px;
+  width: 88px;
+}
+
+.awards-empty-state .page-subtitle {
+  margin-bottom: 30px;
+}
+
+.awards-join-button {
+  display: inline-block;
+  max-width: 300px;
+  text-decoration: none;
+}
+
+@media (max-width: 760px) {
+  .awards-page-card {
+    padding: 24px 18px;
+  }
+
+  .awards-content {
+    margin-top: 40px;
+  }
+
+  .points-summary {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .points-message {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .leaderboard-labels,
+  .leaderboard-row {
+    grid-template-columns: 60px 1fr 72px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .leaderboard-person {
+    gap: 8px;
+  }
+
+  .leaderboard-avatar {
+    display: none;
+  }
+
+  .awards-empty-state {
+    margin-top: 55px;
+  }
+}

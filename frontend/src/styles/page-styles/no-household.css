@@ -1,0 +1,130 @@
+/*
+ * No-household page styles.
+ * Controls the page shown when a logged-in user has not yet
+ * created or joined a household.
+ */
+
+.no-household-page {
+  align-items: flex-start;
+  overflow: auto;
+  padding: 36px 20px;
+}
+
+.no-household-card {
+  margin: 0 auto;
+  max-width: 1040px;
+  min-height: calc(100vh - 72px);
+  padding: 30px 38px 42px;
+  width: 100%;
+}
+
+.no-household-content {
+  margin: 58px auto 0;
+  max-width: 620px;
+  text-align: center;
+}
+
+.no-household-content .eyebrow { margin-bottom: 10px; }
+.no-household-content .page-title { margin-bottom: 12px; }
+
+.no-household-content .page-subtitle {
+  margin: 0 auto;
+  max-width: 460px;
+}
+
+.invite-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 34px;
+  text-align: left;
+}
+
+.invite-form label { font-weight: 700; }
+.invite-form input { width: 100%; }
+
+.invite-form .primary-button {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.form-error {
+  color: #a84343;
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.divider {
+  align-items: center;
+  color: var(--muted-text);
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.divider span {
+  background: var(--border);
+  height: 1px;
+  flex: 1;
+}
+
+.divider p {
+  font-size: 0.8rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.no-household-content .divider { margin: 30px 0; }
+.no-household-content .secondary-button { width: 100%; }
+
+@media (max-width: 760px) {
+  .household-card,
+  .profile-card {
+    padding: 24px 18px;
+  }
+
+  .household-nav,
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .board-section .announcement-message { white-space: normal; }
+
+  .board-row { grid-template-columns: 1fr; }
+  .board-labels { display: none; }
+
+  .board-row > div {
+    border-bottom: 1px solid var(--border);
+    border-right: 0;
+  }
+
+  .board-row > :last-child { border-bottom: 0; }
+  .roommate-name { min-height: auto; }
+
+  .profile-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 650px) {
+  .no-household-page { padding: 16px; }
+  .no-household-card { padding: 26px 22px 32px; }
+  .no-household-content { margin-top: 40px; }
+}
+
+@media (max-width: 600px) {
+  .chore-details-card { padding: 28px 22px; }
+  .chore-meta { grid-template-columns: 1fr; }
+  .status-select { width: 100%; }
+  .profile-hero { align-items: flex-start; }
+  .profile-detail { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .profile-detail dd { text-align: left; }
+}
+
+.leave-household-button {
+  color: #a84343;
+}
+
+.leave-household-button:hover {
+  background: #fff0f0;
+  border-color: #efc1c1;
+}
