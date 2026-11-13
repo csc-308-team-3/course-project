@@ -8,7 +8,7 @@ function navButtonClass(isActive) {
 function Navbar() {
   const { pathname } = useLocation();
   const isHouseholdSection =
-    pathname === '/household' || pathname === '/no-household';
+    pathname.startsWith('/household') || pathname === '/no-household';
 
   return (
     <header className="household-nav">
