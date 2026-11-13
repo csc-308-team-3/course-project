@@ -4,6 +4,7 @@ const express = require('express');
 const session = require('express-session');
 const { checkDatabaseConnection, getPool } = require('./db');
 const authRoutes = require('./routes/auth');
+const leaderboardRoutes = require('./routes/leaderboardRoutes');
 const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
 
 function createApp() {
@@ -48,6 +49,7 @@ function createApp() {
   );
 
   app.use('/auth', authRoutes);
+  app.use('/api/households', leaderboardRoutes);
   app.use('/api/households', weeklyBoardRoutes);
 
   app.get('/health', async (request, response) => {
