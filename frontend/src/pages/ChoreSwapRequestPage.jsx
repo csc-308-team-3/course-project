@@ -67,7 +67,7 @@ function ChoreSwapRequestPage() {
 
         <section className="chore-swap-content">
           <p className="eyebrow">CHORE SWAP REQUEST</p>
-          <h1 className="page-title">Swap {chore.title}</h1>
+          <h1 className="page-title chore-swap-title">Swap {chore.title}</h1>
           <p className="page-subtitle">Due {chore.dueDate}</p>
 
           <form onSubmit={handleSubmit}>
