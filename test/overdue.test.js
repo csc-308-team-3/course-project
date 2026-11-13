@@ -1,4 +1,4 @@
-const { isOverdue, findOverdueInstances } = require('../utils/overdue');
+const { isOverdue, findOverdueInstances } = require('../server/utils/overdue');
 
 // Fixed "current time" so the tests never depend on the real clock.
 const now = new Date('2026-11-04T12:00:00Z');
