@@ -7,6 +7,7 @@ const announcementRoutes = require('./routes/announcementRoutes');
 const authRoutes = require('./routes/auth');
 const leaderboardRoutes = require('./routes/leaderboardRoutes');
 const calendarRoutes = require('./routes/calendarRoutes');
+const choreSwapRequestRoutes = require('./routes/choreSwapRequestRoutes');
 const choreRotationRoutes = require('./routes/choreRotationRoutes');
 const householdRoutes = require('./routes/householdRoutes');
 const weeklyBoardRoutes = require('./routes/weeklyBoardRoutes');
@@ -61,6 +62,7 @@ function createApp() {
   app.use(attachAuthenticatedUser);
   app.use('/api/households', announcementRoutes);
   app.use('/api/households', choreRotationRoutes);
+  app.use('/api/households', choreSwapRequestRoutes);
   app.use('/api/households', householdRoutes);
   app.use('/api/households', weeklyBoardRoutes);
   app.use('/api/households', calendarRoutes);
