@@ -1,8 +1,8 @@
 const express = require('express');
-const { getWeeklyBoard } = require('../controllers/weeklyBoardController');
+const { getLeaderboard } = require('../controllers/leaderboardController');
 
 const router = express.Router();
 
-router.get('/:householdId/api/leaderboard', getWeeklyBoard);
+router.get('/:householdId/leaderboard', getLeaderboard);
 
 module.exports = router;

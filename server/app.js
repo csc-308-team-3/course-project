@@ -5,6 +5,7 @@ const session = require('express-session');
 const { checkDatabaseConnection, getPool } = require('./db');
 const announcementRoutes = require('./routes/announcementRoutes');
 const authRoutes = require('./routes/auth');
+const leaderboardRoutes = require('./routes/leaderboardRoutes');
 const calendarRoutes = require('./routes/calendarRoutes');
 const choreRotationRoutes = require('./routes/choreRotationRoutes');
 const householdRoutes = require('./routes/householdRoutes');
@@ -56,6 +57,7 @@ function createApp() {
   );
 
   app.use('/auth', authRoutes);
+  app.use('/api/households', leaderboardRoutes);
   app.use(attachAuthenticatedUser);
   app.use('/api/households', announcementRoutes);
   app.use('/api/households', choreRotationRoutes);
