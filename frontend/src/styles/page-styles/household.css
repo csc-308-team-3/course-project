@@ -301,3 +301,8 @@
   padding: 9px 12px;
   width: auto;
 }
+
+.chore-swap-response-actions .small-primary-button:hover {
+  box-shadow: 0 8px 16px rgba(52, 124, 97, 0.24);
+  transform: translateY(-2px);
+}
