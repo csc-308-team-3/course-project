@@ -1,0 +1,269 @@
+/*
+ * Global ChoreMate styles.
+ * Defines colors, typography, form defaults, shared page layout,
+ * navigation, and reusable styles used throughout the application.
+ */
+
+:root {
+  --forest: #1d3734;
+  --forest-light: #294c46;
+  --green: #347c61;
+  --mint: #dff2e9;
+  --gold: #f8cd8f;
+  --text: #203633;
+  --muted-text: #62706d;
+  --border: #d9e2dc;
+  background: #f5f7f4;
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+/* Shared page styles */
+.app-page {
+  align-items: center;
+  background:
+    radial-gradient(circle at 12% 15%, #a8dfca 0 80px, transparent 81px),
+    radial-gradient(circle at 90% 82%, var(--gold) 0 130px, transparent 131px),
+    linear-gradient(135deg, var(--forest), var(--forest-light));
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 36px 20px;
+  position: relative;
+}
+
+.app-card {
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(8, 30, 26, 0.3);
+  padding: 38px;
+  position: relative;
+  text-align: left;
+  width: 100%;
+  z-index: 1;
+}
+
+.brand-mark {
+  align-items: center;
+  background: var(--mint);
+  border-radius: 14px;
+  color: #277052;
+  display: flex;
+  font-size: 28px;
+  height: 52px;
+  justify-content: center;
+  margin-bottom: 22px;
+  width: 52px;
+}
+
+.eyebrow {
+  color: #4f8a71;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  margin: 0 0 8px;
+}
+
+.page-title {
+  color: var(--text);
+  font-family: Georgia, serif;
+  font-size: clamp(2.8rem, 8vw, 4rem);
+  line-height: 1;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: var(--muted-text);
+  margin: 12px 0 30px;
+}
+
+label {
+  color: #314440;
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+input {
+  background: #f5f7f4;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  margin-bottom: 20px;
+  outline: none;
+  padding: 14px 15px;
+  width: 100%;
+}
+
+input:focus {
+  border-color: #4f9b78;
+  box-shadow: 0 0 0 3px rgba(79, 155, 120, 0.18);
+}
+
+.primary-button,
+.secondary-button {
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  padding: 14px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  width: 100%;
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.back-button:hover,
+.task-card-link:hover {
+  transform: translateY(-2px);
+}
+
+.primary-button {
+  background: var(--green);
+  border: 0;
+  box-shadow: 0 8px 16px rgba(52, 124, 97, 0.24);
+  color: white;
+}
+
+.secondary-button {
+  background: white;
+  border: 1px solid var(--border);
+  color: #314440;
+}
+
+.secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.bubble,
+.sparkle {
+  pointer-events: none;
+  position: absolute;
+}
+
+.bubble {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+}
+
+.bubble-one {
+  height: 310px;
+  left: -140px;
+  top: 46%;
+  width: 310px;
+}
+
+.bubble-two {
+  height: 190px;
+  right: 6%;
+  top: 8%;
+  width: 190px;
+}
+
+.sparkle {
+  color: #ffe0a7;
+  font-size: 34px;
+}
+
+.sparkle-one {
+  left: 16%;
+  top: 18%;
+}
+
+.sparkle-two {
+  bottom: 16%;
+  right: 18%;
+}
+
+/* Shared navigation */
+.household-nav,
+.household-brand,
+.nav-actions,
+.board-details,
+.section-heading {
+  align-items: center;
+  display: flex;
+}
+
+.household-nav,
+.section-heading {
+  justify-content: space-between;
+}
+
+.household-brand {
+  gap: 12px;
+}
+
+.household-brand .brand-mark {
+  font-size: 24px;
+  height: 44px;
+  margin: 0;
+  width: 44px;
+}
+
+.household-brand strong {
+  color: var(--text);
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+}
+
+.nav-actions {
+  gap: 14px;
+}
+
+.nav-button {
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+  color: var(--muted-text);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 9px 12px;
+  text-decoration: none;
+}
+
+.nav-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.active-nav-button {
+  background: var(--mint);
+  color: var(--green);
+}
+
+.text-button {
+  background: transparent;
+  border: 0;
+  color: var(--green);
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0;
+}

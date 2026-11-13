@@ -1,0 +1,62 @@
+.chore-swap-card {
+  max-width: 1160px;
+  padding: 30px 38px 42px;
+}
+
+.chore-swap-content {
+  margin: 52px auto 16px;
+  max-width: none;
+}
+
+.chore-swap-title {
+  font-size: clamp(2.1rem, 4vw, 3.2rem);
+}
+
+.roommate-picker {
+  border: 0;
+  margin: 28px 0 20px;
+  padding: 0;
+}
+
+.roommate-picker legend {
+  color: var(--text);
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.roommate-option {
+  align-items: center;
+  background: #f5f7f4;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  margin: 8px 0;
+  padding: 13px 15px;
+}
+
+.roommate-option input {
+  margin: 0;
+  width: auto;
+}
+
+.chore-swap-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.chore-swap-actions button {
+  width: auto;
+}
+
+@media (max-width: 560px) {
+  .chore-swap-actions {
+    flex-direction: column;
+  }
+
+  .chore-swap-actions button {
+    width: 100%;
+  }
+}

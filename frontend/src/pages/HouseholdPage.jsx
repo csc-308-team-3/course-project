@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
+import {
+  cancelChoreSwapRequest,
+  getIncomingChoreSwapRequests,
+  getOutgoingChoreSwapRequests,
+  respondToChoreSwapRequest,
+} from '../services/choreSwapRequests';
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -66,7 +74,18 @@ function HouseholdPage() {
   const [board, setBoard] = useState(null);
   const [boardError, setBoardError] = useState('');
   const [boardLoading, setBoardLoading] = useState(true);
+  const [boardVersion, setBoardVersion] = useState(0);
+  const [incomingChoreSwapRequests, setIncomingChoreSwapRequests] = useState(
+    [],
+  );
+  const [outgoingChoreSwapRequests, setOutgoingChoreSwapRequests] = useState(
+    [],
+  );
+  const [choreSwapRequestError, setChoreSwapRequestError] = useState('');
+  const [choreSwapRequestVersion, setChoreSwapRequestVersion] = useState(0);
   const { household } = useHousehold();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [copyMessage, setCopyMessage] = useState('');
   const [announcement, setAnnouncement] = useState(null);
   const [announcementDraft, setAnnouncementDraft] = useState('');
@@ -101,9 +120,26 @@ function HouseholdPage() {
     }
 
     loadBoard();
-  }, [household.id, selectedWeek]);
+  }, [household.id, selectedWeek, boardVersion]);
 
-    useEffect(() => {
+  useEffect(() => {
+    async function loadChoreSwapRequests() {
+      try {
+        const [incoming, outgoing] = await Promise.all([
+          getIncomingChoreSwapRequests(household.id),
+          getOutgoingChoreSwapRequests(household.id),
+        ]);
+        setIncomingChoreSwapRequests(incoming.choreSwapRequests);
+        setOutgoingChoreSwapRequests(outgoing.choreSwapRequests);
+      } catch (error) {
+        setChoreSwapRequestError(error.message);
+      }
+    }
+
+    loadChoreSwapRequests();
+  }, [household.id, choreSwapRequestVersion]);
+
+  useEffect(() => {
     async function loadAnnouncement() {
       setAnnouncementLoading(true);
       setAnnouncementError('');
@@ -116,7 +152,9 @@ function HouseholdPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || 'Unable to load the weekly announcement.');
+          throw new Error(
+            data.error || 'Unable to load the weekly announcement.',
+          );
         }
 
         setAnnouncement(data.announcement);
@@ -219,6 +257,37 @@ function HouseholdPage() {
       : `Due ${chore.dueDate}`;
   }
 
+  async function respondToRequest(requestId, action) {
+    setChoreSwapRequestError('');
+
+    try {
+      await respondToChoreSwapRequest(household.id, requestId, action);
+    } catch (error) {
+      setChoreSwapRequestError(error.message);
+    } finally {
+      setChoreSwapRequestVersion((version) => version + 1);
+      setBoardVersion((version) => version + 1);
+    }
+  }
+
+  async function cancelRequest(requestId) {
+    setChoreSwapRequestError('');
+
+    try {
+      await cancelChoreSwapRequest(household.id, requestId);
+    } catch (error) {
+      setChoreSwapRequestError(error.message);
+    } finally {
+      setChoreSwapRequestVersion((version) => version + 1);
+    }
+  }
+
+  function outgoingRequestFor(choreId) {
+    return outgoingChoreSwapRequests.find(
+      (choreSwapRequest) => choreSwapRequest.instanceId === choreId,
+    );
+  }
+
   return (
     <main className="app-page household-page">
       <div className="bubble bubble-one" />
@@ -274,15 +343,17 @@ function HouseholdPage() {
               <div className="announcement-heading">
                 <p className="eyebrow">THIS WEEK'S ANNOUNCEMENT:</p>
 
-                {!announcementLoading && !isEditingAnnouncement && announcement && (
-                  <button
-                    type="button"
-                    className="text-button announcement-edit-button"
-                    onClick={startEditingAnnouncement}
-                  >
-                    {announcement ? 'Edit announcement' : 'Add announcement'}
-                  </button>
-                )}
+                {!announcementLoading &&
+                  !isEditingAnnouncement &&
+                  announcement && (
+                    <button
+                      type="button"
+                      className="text-button announcement-edit-button"
+                      onClick={startEditingAnnouncement}
+                    >
+                      {announcement ? 'Edit announcement' : 'Add announcement'}
+                    </button>
+                  )}
               </div>
 
               {announcementLoading && (
@@ -292,7 +363,9 @@ function HouseholdPage() {
               {!announcementLoading && !isEditingAnnouncement && (
                 <>
                   {announcement ? (
-                    <h2 className="announcement-message">{announcement.message}</h2>
+                    <h2 className="announcement-message">
+                      {announcement.message}
+                    </h2>
                   ) : (
                     <div className="announcement-empty-space">
                       <button
@@ -313,7 +386,9 @@ function HouseholdPage() {
                     className="announcement-input"
                     type="text"
                     value={announcementDraft}
-                    onChange={(event) => setAnnouncementDraft(event.target.value)}
+                    onChange={(event) =>
+                      setAnnouncementDraft(event.target.value)
+                    }
                     placeholder="Write this week's announcement..."
                     maxLength="75"
                     aria-label="Weekly announcement"
@@ -353,6 +428,53 @@ function HouseholdPage() {
               + Add chore
             </button>
           </div>
+
+          {choreSwapRequestError && (
+            <p className="form-error">{choreSwapRequestError}</p>
+          )}
+
+          {incomingChoreSwapRequests.length > 0 && (
+            <section className="incoming-chore-swap-requests">
+              <p className="eyebrow">CHORE SWAP REQUESTS</p>
+
+              {incomingChoreSwapRequests.map((choreSwapRequest) => (
+                <article
+                  className="incoming-chore-swap-request"
+                  key={choreSwapRequest.id}
+                >
+                  <div>
+                    <p>
+                      <strong>{choreSwapRequest.requesterName}</strong> wants to
+                      swap a chore with you
+                    </p>
+                    <h3>{choreSwapRequest.choreTitle}</h3>
+                    <p>Due {choreSwapRequest.dueDate}</p>
+                  </div>
+
+                  <div className="chore-swap-response-actions">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() =>
+                        respondToRequest(choreSwapRequest.id, 'decline')
+                      }
+                    >
+                      Deny
+                    </button>
+                    <button
+                      type="button"
+                      className="small-primary-button"
+                      onClick={() =>
+                        respondToRequest(choreSwapRequest.id, 'accept')
+                      }
+                    >
+                      Accept
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </section>
+          )}
 
           <div className="chore-board">
             <div className="board-row board-labels">
@@ -394,6 +516,40 @@ function HouseholdPage() {
                         <div>
                           <h3>{chore.title}</h3>
                           <p>{statusMessage(chore, status)}</p>
+
+                          {roommate.id === user?.id &&
+                            status !== 'complete' &&
+                            (outgoingRequestFor(chore.id) ? (
+                              <>
+                                <p className="task-card-pending">
+                                  Request pending
+                                </p>
+                                <button
+                                  type="button"
+                                  className="task-card-action"
+                                  onClick={() =>
+                                    cancelRequest(
+                                      outgoingRequestFor(chore.id).id,
+                                    )
+                                  }
+                                >
+                                  Cancel request
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                type="button"
+                                className="task-card-action"
+                                onClick={() =>
+                                  navigate(
+                                    `/household/chore-swap-requests/${chore.id}`,
+                                    { state: { chore } },
+                                  )
+                                }
+                              >
+                                Swap chore
+                              </button>
+                            ))}
                         </div>
                       </div>
                     ))}

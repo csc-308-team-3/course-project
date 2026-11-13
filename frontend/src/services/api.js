@@ -13,7 +13,9 @@ export async function request(path, options = {}) {
   const data = response.status === 204 ? null : await response.json();
 
   if (!response.ok) {
-    throw new Error(data?.message ?? 'Something went wrong. Please try again.');
+    throw new Error(
+      data?.message ?? data?.error ?? 'Something went wrong. Please try again.',
+    );
   }
 
   return data;
