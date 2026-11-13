@@ -208,6 +208,34 @@ async function getIncomingChoreSwapRequests(userId, householdId) {
   return result.rows;
 }
 
+async function getOutgoingChoreSwapRequests(userId, householdId) {
+  await requireHouseholdMember(getPool(), userId, householdId);
+
+  const result = await getPool().query(
+    `
+      SELECT
+        swap_requests.id,
+        swap_requests.chore_instance_id AS "instanceId",
+        swap_requests.recipient_id AS "recipientId",
+        users.name AS "recipientName",
+        chores.title AS "choreTitle",
+        TO_CHAR(chore_instances.due_date, 'YYYY-MM-DD') AS "dueDate",
+        swap_requests.requested_at AS "requestedAt"
+      FROM swap_requests
+      JOIN chore_instances ON chore_instances.id = swap_requests.chore_instance_id
+      JOIN chores ON chores.id = chore_instances.chore_id
+      JOIN users ON users.id = swap_requests.recipient_id
+      WHERE swap_requests.requester_id = $1
+        AND swap_requests.status = 'pending'
+        AND chores.household_id = $2
+      ORDER BY swap_requests.requested_at ASC
+    `,
+    [userId, householdId],
+  );
+
+  return result.rows;
+}
+
 async function getChoreSwapRequest(db, householdId, requestId) {
   const result = await db.query(
     `
@@ -361,5 +389,6 @@ module.exports = {
   cancelChoreSwapRequest,
   createChoreSwapRequest,
   getIncomingChoreSwapRequests,
+  getOutgoingChoreSwapRequests,
   respondToChoreSwapRequest,
 };

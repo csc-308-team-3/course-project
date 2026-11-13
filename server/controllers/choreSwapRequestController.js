@@ -67,6 +67,25 @@ async function getIncomingChoreSwapRequests(request, response) {
   }
 }
 
+async function getOutgoingChoreSwapRequests(request, response) {
+  const householdError = validateId(request.params.householdId, 'householdId');
+
+  if (householdError) {
+    return response.status(400).json({ error: householdError });
+  }
+
+  try {
+    const choreSwapRequests =
+      await choreSwapRequestService.getOutgoingChoreSwapRequests(
+        request.user.id,
+        request.params.householdId,
+      );
+    return response.status(200).json({ choreSwapRequests });
+  } catch (error) {
+    return handleError(response, error);
+  }
+}
+
 async function respondToChoreSwapRequest(request, response) {
   const householdError = validateId(request.params.householdId, 'householdId');
   const requestError = validateId(request.params.requestId, 'requestId');
@@ -123,5 +142,6 @@ module.exports = {
   cancelChoreSwapRequest,
   createChoreSwapRequest,
   getIncomingChoreSwapRequests,
+  getOutgoingChoreSwapRequests,
   respondToChoreSwapRequest,
 };

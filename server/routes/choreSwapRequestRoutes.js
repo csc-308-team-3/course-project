@@ -3,6 +3,7 @@ const {
   cancelChoreSwapRequest,
   createChoreSwapRequest,
   getIncomingChoreSwapRequests,
+  getOutgoingChoreSwapRequests,
   respondToChoreSwapRequest,
 } = require('../controllers/choreSwapRequestController');
 const {
@@ -14,6 +15,11 @@ const router = express.Router();
 
 router.use(requireAuthenticatedUser);
 
+router.get(
+  '/:householdId/chore-swap-requests/outgoing',
+  requireValidHouseholdId,
+  getOutgoingChoreSwapRequests,
+);
 router.get(
   '/:householdId/chore-swap-requests',
   requireValidHouseholdId,
