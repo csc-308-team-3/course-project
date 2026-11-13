@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ChoreProvider } from './context/ChoreContext';
 import { HouseholdProvider, useHousehold } from './context/HouseholdContext';
 import ChoreDetailsPage from './pages/ChoreDetailsPage';
+import ChoreSwapRequestPage from './pages/ChoreSwapRequestPage';
 import HouseholdPage from './pages/HouseholdPage';
 import CalendarPage from './pages/CalendarPage';
 import LoginPage from './pages/LoginPage';
@@ -11,7 +12,7 @@ import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import AwardsPage from './pages/AwardsPage';
 
-function HouseholdRoute() {
+function HouseholdRoute({ children }) {
   const { user } = useAuth();
   const { hasHousehold, loading } = useHousehold();
 
@@ -20,7 +21,7 @@ function HouseholdRoute() {
   }
 
   return user?.householdId || hasHousehold ? (
-    <HouseholdPage />
+    (children ?? <HouseholdPage />)
   ) : (
     <Navigate to="/no-household" replace />
   );
@@ -89,6 +90,16 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ChoreDetailsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/household/chore-swap-requests/:choreInstanceId"
+                element={
+                  <ProtectedRoute>
+                    <HouseholdRoute>
+                      <ChoreSwapRequestPage />
+                    </HouseholdRoute>
                   </ProtectedRoute>
                 }
               />

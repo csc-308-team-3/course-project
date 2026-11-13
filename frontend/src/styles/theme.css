@@ -6,6 +6,7 @@
 @import './base.css';
 @import './page-styles/household.css';
 @import './page-styles/chore-details.css';
+@import './page-styles/chore-swap.css';
 @import './page-styles/profile.css';
 @import './page-styles/no-household.css';
 @import './page-styles/awards.css';
