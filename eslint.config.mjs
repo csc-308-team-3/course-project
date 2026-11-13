@@ -20,7 +20,12 @@ export default defineConfig([
   },
   {
     files: ['test/**/*.js'],
-    languageOptions: { globals: globals.node },
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+    },
     rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
 ]);

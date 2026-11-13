@@ -1,29 +1,99 @@
-import { createContext, useContext, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { useAuth } from './AuthContext';
 
 const HouseholdContext = createContext();
 
-export function HouseholdProvider({ children }) {
-  const [hasHousehold, setHasHousehold] = useState(() => {
-    return localStorage.getItem('choremate-has-household') === 'true';
+async function request(path, options = {}) {
+  const response = await fetch(`/api/households${path}`, {
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
   });
+  const data = response.status === 204 ? null : await response.json();
 
-  function joinHousehold(code) {
-    if (code !== 'A1B2C3') {
-      return false;
-    }
-
-    localStorage.setItem('choremate-has-household', 'true');
-    setHasHousehold(true);
-    return true;
+  if (!response.ok) {
+    throw new Error(data.error || 'Unable to update household.');
   }
 
-  function leaveHousehold() {
-    localStorage.removeItem('choremate-has-household');
-    setHasHousehold(false);
+  return data;
+}
+
+export function HouseholdProvider({ children }) {
+  const { isLoading: authLoading, setUser, user } = useAuth();
+  const [household, setHousehold] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const refreshHousehold = useCallback(async () => {
+    if (!user?.id) {
+      setHousehold(null);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const data = await request('/me');
+      setHousehold(data.household);
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!authLoading) {
+      refreshHousehold().catch(() => setHousehold(null));
+    }
+  }, [authLoading, refreshHousehold]);
+
+  function updateUserHousehold(householdId) {
+    setUser((currentUser) =>
+      currentUser ? { ...currentUser, householdId } : currentUser,
+    );
+  }
+
+  async function createHousehold(name) {
+    const data = await request('', {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+    });
+    setHousehold(data.household);
+    updateUserHousehold(data.household.id);
+  }
+
+  async function joinHousehold(inviteCode) {
+    const data = await request('/join', {
+      method: 'POST',
+      body: JSON.stringify({ inviteCode }),
+    });
+    setHousehold(data.household);
+    updateUserHousehold(data.household.id);
+  }
+
+  async function leaveHousehold() {
+    await request(`/${household.id}/leave`, { method: 'POST' });
+    setHousehold(null);
+    updateUserHousehold(null);
   }
 
   return (
-    <HouseholdContext.Provider value={{ hasHousehold, joinHousehold, leaveHousehold }}>
+    <HouseholdContext.Provider
+      value={{
+        createHousehold,
+        hasHousehold: Boolean(household),
+        household,
+        joinHousehold,
+        leaveHousehold,
+        loading,
+        refreshHousehold,
+      }}
+    >
       {children}
     </HouseholdContext.Provider>
   );

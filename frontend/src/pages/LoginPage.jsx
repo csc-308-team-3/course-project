@@ -1,16 +1,91 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { login } from '../services/auth';
+import { login, loginWithGoogle } from '../services/auth';
 import '../styles/auth.css';
+
+function loadGoogleIdentityServices() {
+  if (window.google?.accounts?.id) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.querySelector(
+      'script[src="https://accounts.google.com/gsi/client"]',
+    );
+
+    script.addEventListener('load', resolve, { once: true });
+    script.addEventListener('error', reject, { once: true });
+  });
+}
 
 function LoginPage() {
   const navigate = useNavigate();
   const { setUser } = useAuth();
+  const googleButtonRef = useRef(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleGoogleCredential = useCallback(
+    async ({ credential }) => {
+      setError('');
+      setIsSubmitting(true);
+
+      try {
+        const { user } = await loginWithGoogle(credential);
+        setUser(user);
+        navigate(user.householdId ? '/household' : '/no-household');
+      } catch (requestError) {
+        setError(requestError.message);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [navigate, setUser],
+  );
+
+  useEffect(() => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+    if (!clientId) {
+      return undefined;
+    }
+
+    let isMounted = true;
+
+    loadGoogleIdentityServices()
+      .then(() => {
+        if (!isMounted || !googleButtonRef.current) {
+          return;
+        }
+
+        window.google.accounts.id.initialize({
+          callback: handleGoogleCredential,
+          client_id: clientId,
+          ux_mode: 'popup',
+        });
+        window.google.accounts.id.renderButton(googleButtonRef.current, {
+          logo_alignment: 'center',
+          shape: 'rectangular',
+          size: 'large',
+          text: 'signin_with',
+          theme: 'outline',
+          type: 'standard',
+          width: Math.min(400, googleButtonRef.current.clientWidth),
+        });
+      })
+      .catch(() => {
+        if (isMounted) {
+          setError('Unable to load Google sign-in. Please try again.');
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [handleGoogleCredential]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -68,9 +143,17 @@ function LoginPage() {
             required
           />
 
-          {error && <p className="form-error" role="alert">{error}</p>}
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
 
-          <button type="submit" className="primary-button" disabled={isSubmitting}>
+          <button
+            type="submit"
+            className="primary-button"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? 'Logging in…' : 'Log In'}
           </button>
         </form>
@@ -81,15 +164,19 @@ function LoginPage() {
           <span />
         </div>
 
-        <button type="button" className="secondary-button">
-          <span className="google-icon">G</span>
-          Continue with Google
-        </button>
+        {import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
+          <div className="google-signin" ref={googleButtonRef} />
+        ) : (
+          <p className="form-error" role="alert">
+            Google sign-in is not configured.
+          </p>
+        )}
 
         <p className="create-account">
-            New here? <button type="button" onClick={() => navigate('/register')}>
+          New here?{' '}
+          <button type="button" onClick={() => navigate('/register')}>
             Create an account
-            </button>
+          </button>
         </p>
       </section>
     </main>

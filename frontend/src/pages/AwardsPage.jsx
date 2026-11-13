@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import LogoutButton from '../components/LogoutButton';
+import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { getLeaderboard } from '../services/leaderboard';
 
 function initials(name) {
-  return name.split(' ').filter(Boolean).map((word) => word[0]).join('').slice(0, 2).toUpperCase();
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .map((word) => word[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 function medal(rank) {
@@ -53,15 +59,7 @@ function AwardsPage() {
       <div className="sparkle sparkle-two">✦</div>
 
       <section className="app-card awards-page-card">
-        <header className="household-nav">
-          <div className="household-brand"><div className="brand-mark">⌂</div><strong>ChoreMate</strong></div>
-          <nav className="nav-actions">
-            <Link className="nav-button" to="/household">Household</Link>
-            <Link className="nav-button active-nav-button" to="/awards">Awards</Link>
-            <Link className="nav-button" to="/profile">Profile</Link>
-            <LogoutButton />
-          </nav>
-        </header>
+        <Navbar />
 
         {householdId ? (
           <section className="awards-content">
