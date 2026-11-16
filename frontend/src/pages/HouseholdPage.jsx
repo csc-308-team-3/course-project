@@ -93,6 +93,7 @@ function HouseholdPage() {
   const [announcementLoading, setAnnouncementLoading] = useState(true);
   const [announcementSaving, setAnnouncementSaving] = useState(false);
   const [isEditingAnnouncement, setIsEditingAnnouncement] = useState(false);
+  const [isClearAnnouncementDialogOpen, setIsClearAnnouncementDialogOpen] = useState(false);
 
   useEffect(() => {
     async function loadBoard() {
@@ -192,6 +193,44 @@ function HouseholdPage() {
     setAnnouncementDraft(announcement?.message ?? '');
     setAnnouncementError('');
     setIsEditingAnnouncement(false);
+  }
+
+  function openClearAnnouncementDialog() {
+    setAnnouncementError('');
+    setIsClearAnnouncementDialogOpen(true);
+  }
+
+  function closeClearAnnouncementDialog() {
+    setIsClearAnnouncementDialogOpen(false);
+  }
+
+  async function clearAnnouncement() {
+    setAnnouncementSaving(true);
+    setAnnouncementError('');
+
+    try {
+      const response = await fetch(
+        `/api/households/${household.id}/announcements?weekStart=${selectedWeek}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+        },
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Unable to clear the announcement.');
+      }
+
+      setAnnouncement(null);
+      setAnnouncementDraft('');
+      setIsEditingAnnouncement(false);
+      setIsClearAnnouncementDialogOpen(false);
+    } catch (error) {
+      setAnnouncementError(error.message);
+    } finally {
+      setAnnouncementSaving(false);
+    }
   }
 
   async function saveAnnouncement(event) {
@@ -415,6 +454,18 @@ function HouseholdPage() {
                     >
                       Cancel
                     </button>
+
+                    {announcement && (
+                      <button
+                        type="button"
+                        className="text-button announcement-clear-button"
+                        onClick={openClearAnnouncementDialog}
+                        disabled={announcementSaving}
+                      >
+                        Clear
+                      </button>
+                    )}
+
                   </div>
                 </form>
               )}
@@ -560,6 +611,48 @@ function HouseholdPage() {
           </div>
         </section>
       </section>
+
+    {isClearAnnouncementDialogOpen && (
+      <div className="announcement-dialog-backdrop">
+        <section
+          className="announcement-clear-dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="clear-announcement-title"
+        >
+          <h2 id="clear-announcement-title">Clear announcement?</h2>
+
+          <p>
+            Are you sure you want to remove this week&apos;s announcement?
+          </p>
+
+          {announcementError && (
+            <p className="announcement-error">{announcementError}</p>
+          )}
+
+          <div className="announcement-dialog-actions">
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={closeClearAnnouncementDialog}
+              disabled={announcementSaving}
+            >
+              Keep
+            </button>
+
+            <button
+              type="button"
+              className="small-primary-button announcement-confirm-clear-button"
+              onClick={clearAnnouncement}
+              disabled={announcementSaving}
+            >
+              {announcementSaving ? 'Clearing...' : 'Clear'}
+            </button>
+          </div>
+        </section>
+      </div>
+    )}
+
     </main>
   );
 }
