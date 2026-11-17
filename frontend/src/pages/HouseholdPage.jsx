@@ -341,7 +341,7 @@ function HouseholdPage() {
           <div className="section-heading">
             <div className="announcement-content">
               <div className="announcement-heading">
-                <p className="eyebrow">THIS WEEK'S ANNOUNCEMENT:</p>
+                <p className="eyebrow">THIS WEEK&apos;S ANNOUNCEMENT:</p>
 
                 {!announcementLoading &&
                   !isEditingAnnouncement &&
