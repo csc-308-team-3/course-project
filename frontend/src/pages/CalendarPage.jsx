@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useHousehold } from '../context/HouseholdContext';
 
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
 function formatDate(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -99,7 +101,7 @@ function CalendarPage() {
         }
 
         const response = await fetch(
-          `/api/households/${household.id}/calendar?${searchParams}`,
+          `${apiBaseUrl}/api/households/${household.id}/calendar?${searchParams}`,
           { credentials: 'include' },
         );
         const data = await response.json();
