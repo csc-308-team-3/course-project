@@ -59,3 +59,65 @@
 .announcement-add-button {
   margin-top: 4px;
 }
+
+/* Clear announcement styles */
+
+.announcement-clear-button {
+  color: #a33d3d;
+}
+
+.announcement-dialog-backdrop {
+  align-items: center;
+  background: rgba(29, 55, 52, 0.58);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 20px;
+  position: fixed;
+  z-index: 10;
+}
+
+.announcement-clear-dialog {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 20px 45px rgba(8, 30, 26, 0.3);
+  max-width: 420px;
+  padding: 26px;
+  width: 100%;
+}
+
+.announcement-clear-dialog h2 {
+  color: var(--text);
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+  margin: 0 0 10px;
+}
+
+.announcement-clear-dialog p {
+  color: var(--muted-text);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.announcement-dialog-actions {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 24px;
+}
+
+.announcement-dialog-actions .secondary-button,
+.announcement-dialog-actions .small-primary-button {
+  font-size: 0.9rem;
+  padding: 11px 10px;
+  width: 100%;
+}
+
+.announcement-confirm-clear-button {
+  background: #a33d3d;
+}
+
+.announcement-confirm-clear-button:hover {
+  background: #862f2f;
+}
