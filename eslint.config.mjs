@@ -2,9 +2,10 @@ import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
-import { defineConfig } from 'eslint/config';
+import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
+  globalIgnores(['frontend/dist/**']),
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     plugins: { js },
@@ -13,6 +14,7 @@ export default defineConfig([
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat['jsx-runtime'],
   {
     files: ['server/**/*.js'],
     languageOptions: { globals: globals.node },
@@ -28,4 +30,11 @@ export default defineConfig([
     },
     rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
+  {
+  files: ['frontend/src/**/*.{js,jsx}'],
+  settings: { react: { version: 'detect' } },
+  rules: {
+    'react/prop-types': 'off',
+  },
+},
 ]);

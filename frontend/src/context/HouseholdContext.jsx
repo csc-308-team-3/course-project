@@ -7,10 +7,12 @@ import {
 } from 'react';
 import { useAuth } from './AuthContext';
 
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
 const HouseholdContext = createContext();
 
 async function request(path, options = {}) {
-  const response = await fetch(`/api/households${path}`, {
+  const response = await fetch(`${apiBaseUrl}/api/households${path}`, {
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     ...options,

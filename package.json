@@ -8,7 +8,7 @@
     "start": "node server/server.js",
     "dev": "node --watch server/server.js",
     "db:check": "node server/checkDatabase.js",
-    "lint": "eslint .",
+    "lint": "eslint . && npx prettier --check .",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "dev:all": "concurrently \"npm run dev\" \"npm --prefix frontend run dev\""

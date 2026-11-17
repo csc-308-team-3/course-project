@@ -10,6 +10,8 @@ import {
   respondToChoreSwapRequest,
 } from '../services/choreSwapRequests';
 
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
 function formatDate(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -101,7 +103,7 @@ function HouseholdPage() {
 
       try {
         const response = await fetch(
-          `/api/households/${household.id}/chore-board?weekStart=${selectedWeek}`,
+          `${apiBaseUrl}/api/households/${household.id}/chore-board?weekStart=${selectedWeek}`,
           { credentials: 'include' },
         );
         const data = await response.json();
@@ -146,7 +148,7 @@ function HouseholdPage() {
 
       try {
         const response = await fetch(
-          `/api/households/${household.id}/announcements?weekStart=${selectedWeek}`,
+          `${apiBaseUrl}/api/households/${household.id}/announcements?weekStart=${selectedWeek}`,
           { credentials: 'include' },
         );
         const data = await response.json();
@@ -206,8 +208,8 @@ function HouseholdPage() {
     try {
       const response = await fetch(
         isDeletingAnnouncement
-          ? `/api/households/${household.id}/announcements?weekStart=${selectedWeek}`
-          : `/api/households/${household.id}/announcements`,
+          ? `${apiBaseUrl}/api/households/${household.id}/announcements?weekStart=${selectedWeek}`
+          : `${apiBaseUrl}/api/households/${household.id}/announcements`,
         {
           method: isDeletingAnnouncement ? 'DELETE' : 'PUT',
           credentials: 'include',
@@ -341,7 +343,7 @@ function HouseholdPage() {
           <div className="section-heading">
             <div className="announcement-content">
               <div className="announcement-heading">
-                <p className="eyebrow">THIS WEEK'S ANNOUNCEMENT:</p>
+                <p className="eyebrow">THIS WEEK&apos;S ANNOUNCEMENT:</p>
 
                 {!announcementLoading &&
                   !isEditingAnnouncement &&
